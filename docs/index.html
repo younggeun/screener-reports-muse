@@ -43,6 +43,17 @@ h1 { margin: 0; font-size: clamp(26px, 6vw, 40px); letter-spacing: -.03em; font-
 .dist-chip:hover { border-color: var(--accent); }
 .dist-chip.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
 .dist-chip b { font-size: 14px; }
+.tabs { display: flex; gap: 8px; margin: 18px 0 2px; }
+.tab { padding: 8px 22px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--dim); font-size: 13px; font-weight: 800;
+  cursor: pointer; font-family: inherit; }
+.tab:hover { border-color: var(--accent); }
+.tab.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.sec-title { font-size: 15px; font-weight: 800; margin: 0 0 4px; }
+.sec-sub { font-size: 12px; color: var(--dim); margin: 0 0 10px; }
+.period-line { font-size: 13px; color: var(--dim); margin: 14px 2px 4px; }
+.period-line b { color: var(--text); }
+.empty-note { padding: 22px; text-align: center; color: var(--dim); font-size: 13px; }
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 12px; }
 .filters { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; }
 .f { display: flex; flex-direction: column; gap: 4px; }
@@ -91,6 +102,12 @@ tbody tr:last-child td { border-bottom: none; }
     <h1>데일리 스캔 리포트</h1>
     <div class="date-pill">📅 <input type="date" id="f-date"><span id="date-note" style="font-size:11px;color:var(--dim);font-weight:400"></span></div>
   </div>
+  <div class="tabs">
+    <button class="tab active" data-view="daily">일간</button>
+    <button class="tab" data-view="weekly">주간</button>
+    <button class="tab" data-view="monthly">월간</button>
+  </div>
+  <div id="view-daily">
   <div class="dist" id="dist"></div>
 
   <div class="card">
@@ -132,6 +149,58 @@ tbody tr:last-child td { border-bottom: none; }
     <tbody id="body"></tbody>
   </table>
   </div>
+  </div><!-- /view-daily -->
+
+  <div id="view-weekly" style="display:none">
+    <div class="period-line" id="w-period"></div>
+    <div class="card">
+      <p class="sec-title">🚀 신규 돌파완료</p>
+      <p class="sec-sub">이번 주에 돌파가 확정된 종목</p>
+      <div style="overflow-x:auto"><table><thead><tr>
+        <th>종목</th><th>돌파일</th><th>총점</th><th>거래대금(억)</th><th>돌파거래량%</th>
+      </tr></thead><tbody id="w-brk"></tbody></table></div>
+    </div>
+    <div class="card">
+      <p class="sec-title">⏳ 돌파임박 지속</p>
+      <p class="sec-sub">3일 이상 돌파임박을 유지 중인 종목</p>
+      <div style="overflow-x:auto"><table><thead><tr>
+        <th>종목</th><th>지속일수</th><th>총점</th><th>피벗거리%</th>
+      </tr></thead><tbody id="w-near"></tbody></table></div>
+    </div>
+    <div class="card">
+      <p class="sec-title">📈 주간 수익률 TOP 15</p>
+      <p class="sec-sub">첫 스캔 종가 → 마지막 스캔 종가 기준</p>
+      <div style="overflow-x:auto"><table><thead><tr>
+        <th>종목</th><th>수익률%</th><th>종가</th>
+      </tr></thead><tbody id="w-mov"></tbody></table></div>
+    </div>
+  </div><!-- /view-weekly -->
+
+  <div id="view-monthly" style="display:none">
+    <div class="period-line" id="m-period"></div>
+    <div class="card">
+      <p class="sec-title">🚀 신규 돌파완료</p>
+      <p class="sec-sub">이번 달에 돌파가 확정된 종목</p>
+      <div style="overflow-x:auto"><table><thead><tr>
+        <th>종목</th><th>돌파일</th><th>총점</th><th>거래대금(억)</th><th>돌파거래량%</th>
+      </tr></thead><tbody id="m-brk"></tbody></table></div>
+    </div>
+    <div class="card">
+      <p class="sec-title">⏳ 돌파임박 지속</p>
+      <p class="sec-sub">3일 이상 돌파임박을 유지 중인 종목</p>
+      <div style="overflow-x:auto"><table><thead><tr>
+        <th>종목</th><th>지속일수</th><th>총점</th><th>피벗거리%</th>
+      </tr></thead><tbody id="m-near"></tbody></table></div>
+    </div>
+    <div class="card">
+      <p class="sec-title">📈 월간 수익률 TOP 15</p>
+      <p class="sec-sub">첫 스캔 종가 → 마지막 스캔 종가 기준</p>
+      <div style="overflow-x:auto"><table><thead><tr>
+        <th>종목</th><th>수익률%</th><th>종가</th>
+      </tr></thead><tbody id="m-mov"></tbody></table></div>
+    </div>
+  </div><!-- /view-monthly -->
+
   <div class="foot">매일 밤 전 종목 스캔 후 자동 업데이트 · 일봉 캔들 원본은 제외 (용량) · <a href="https://github.com/younggeun/screener-reports-muse" style="color:var(--accent)">GitHub 저장소</a></div>
 </div>
 <script>
@@ -247,6 +316,61 @@ document.querySelectorAll("th[data-k]").forEach(th => th.addEventListener("click
   di.value = toISO(DATES[DATES.length - 1]);
   load(DATES[DATES.length - 1]);
 })();
+
+/* ---- weekly / monthly aggregate views ---- */
+const aggCache = {};
+function d8label(d8) { return d8 ? `${d8.slice(4,6)}/${d8.slice(6,8)}` : "-"; }
+function nameCell(o) { const sub = o.market ? `${o.code} · ${o.market}` : o.code; return `<td class="name-cell"><b>${o.name}</b><span>${sub}</span></td>`; }
+function scoreCell(s) {
+  if (s == null || s === "") return "<td>-</td>";
+  return `<td><span class="score-n">${s}</span><span class="grade g-${grade(s)}">${grade(s).toUpperCase()}</span></td>`;
+}
+
+async function loadAgg(kind) {
+  if (!aggCache[kind]) {
+    const res = await fetch(`${BASE}/scans/${kind}/latest.json`);
+    if (!res.ok) throw new Error("no data");
+    aggCache[kind] = await res.json();
+  }
+  return aggCache[kind];
+}
+
+function renderAgg(kind) {
+  const p = kind === "weekly" ? "w" : "m";
+  loadAgg(kind).then(d => {
+    $(`${p}-period`).innerHTML =
+      `<b>${d.period}</b> · ${d8label(d.start_date)} ~ ${d8label(d.end_date)} · 스캔 ${d.scan_count}일`;
+    $(`${p}-brk`).innerHTML = d.new_breakouts.length ? d.new_breakouts.map(o => `<tr>
+        ${nameCell(o)}<td>${d8label(o.breakout_date)}</td>${scoreCell(o.scan_score)}
+        <td>${o.turnover_eok == null ? "-" : fmt(o.turnover_eok)}</td>
+        <td>${o.breakout_volume_ratio == null ? "-" : fmt(o.breakout_volume_ratio, 0)}</td>
+      </tr>`).join("")
+      : `<tr><td colspan="5"><div class="empty-note">해당 기간 신규 돌파가 없어요</div></td></tr>`;
+    $(`${p}-near`).innerHTML = d.persistent_near.length ? d.persistent_near.map(o => `<tr>
+        ${nameCell(o)}<td><b>${o.days}</b>일</td>${scoreCell(o.scan_score)}
+        <td>${o.pivot_dist == null ? "-" : fmt(o.pivot_dist)}</td>
+      </tr>`).join("")
+      : `<tr><td colspan="4"><div class="empty-note">데이터가 쌓이면 표시됩니다 (3일 이상 지속 시)</div></td></tr>`;
+    $(`${p}-mov`).innerHTML = d.top_movers.length ? d.top_movers.map(o => `<tr>
+        ${nameCell(o)}
+        <td class="${o.period_return_pct >= 0 ? "up" : "down"}"><b>${o.period_return_pct >= 0 ? "+" : ""}${fmt(o.period_return_pct)}</b></td>
+        <td>${fmt(o.last_close, 0)}</td>
+      </tr>`).join("")
+      : `<tr><td colspan="3"><div class="empty-note">데이터가 쌓이면 표시됩니다</div></td></tr>`;
+  }).catch(() => {
+    $(`${p}-period`).innerHTML = "집계 데이터를 불러오지 못했어요";
+  });
+}
+
+document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
+  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("active", x === t));
+  const v = t.dataset.view;
+  $("view-daily").style.display = v === "daily" ? "" : "none";
+  $("view-weekly").style.display = v === "weekly" ? "" : "none";
+  $("view-monthly").style.display = v === "monthly" ? "" : "none";
+  if (v === "weekly") renderAgg("weekly");
+  if (v === "monthly") renderAgg("monthly");
+}));
 </script>
 </body>
 </html>
