@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데일리 스캔 리포트</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #eef2ef; --surface: #ffffff; --surface-2: #e4eae6;
+  --text: #101613; --dim: #647069; --border: #cfd8d2;
+  --accent: #087f4d; --accent-soft: #d7f5e4;
+  --warning: #9a6600; --warning-soft: #fff0c6;
+  --risk: #c73737; --risk-soft: #ffe0de;
+  --cool: #2168b5; --signal-near: #e05210;
+  --radius: 12px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #080b0d; --surface: #11161a; --surface-2: #171e22;
+    --text: #edf2ef; --dim: #8d9992; --border: #273138;
+    --accent: #28e07b; --accent-soft: #0f3421;
+    --warning: #f4be4f; --warning-soft: #382b0f;
+    --risk: #ff6868; --risk-soft: #3b191b;
+    --cool: #6aaef5; --signal-near: #ff8a3d;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+  font-family: "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased; }
+.wrap { width: min(1180px, 100%); margin: 0 auto; padding: 24px 16px 48px; }
+.eyebrow { color: var(--accent); font: 700 11px/1.2 ui-monospace, monospace; letter-spacing: .14em; margin: 0 0 8px; }
+h1 { margin: 0; font-size: clamp(26px, 6vw, 40px); letter-spacing: -.03em; font-weight: 800; }
+.head-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.date-pill { display: flex; align-items: center; gap: 8px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; font-size: 13px; font-weight: 700; }
+.date-pill select { border: none; background: transparent; color: inherit; font: inherit; font-weight: 700; cursor: pointer; }
+.dist { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 4px; }
+.dist-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--border); font-size: 12px; font-weight: 700; cursor: pointer; }
+.dist-chip:hover { border-color: var(--accent); }
+.dist-chip.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.dist-chip b { font-size: 14px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 12px; }
+.filters { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; }
+.f { display: flex; flex-direction: column; gap: 4px; }
+.f > span { font-size: 11px; color: var(--dim); font-weight: 700; }
+.f select, .f input { background: var(--bg); color: var(--text); border: 1px solid var(--border);
+  border-radius: 8px; padding: 7px 10px; font-size: 13px; font-family: inherit; }
+.f input:focus, .f select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.count-line { margin: 14px 2px 8px; font-size: 13px; color: var(--dim); }
+.count-line b { color: var(--text); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+th, td { padding: 9px 10px; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
+th { background: var(--surface-2); font-size: 11px; color: var(--dim); cursor: pointer; user-select: none; position: sticky; top: 0; }
+th:hover { color: var(--accent); }
+td:first-child, th:first-child { text-align: left; }
+tbody tr:hover td { background: var(--accent-soft); }
+tbody tr:last-child td { border-bottom: none; }
+.name-cell b { display: block; font-size: 13px; }
+.name-cell span { font-size: 11px; color: var(--dim); }
+.sig { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; }
+.sig-돌파완료 { background: var(--risk); color: #fff; }
+.sig-돌파임박 { background: var(--signal-near); color: #fff; }
+.sig-수축중 { background: var(--accent-soft); color: var(--accent); }
+.sig-관망 { background: var(--surface-2); color: var(--dim); }
+.sig-없음 { background: transparent; color: var(--dim); }
+.sig-데이터부족 { background: var(--surface-2); color: var(--dim); }
+.grade { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px;
+  padding: 0 6px; border-radius: 6px; font-size: 11px; font-weight: 850; margin-left: 6px; vertical-align: 1px; }
+.g-s { background: var(--accent); color: #fff; }
+.g-a { background: var(--accent-soft); color: var(--accent); }
+.g-b { background: var(--warning-soft); color: var(--warning); }
+.g-c, .g-d { background: var(--surface-2); color: var(--dim); }
+.score-n { font-weight: 800; }
+.up { color: var(--risk); } .down { color: var(--cool); }
+.tight-bar { display: inline-block; width: 44px; height: 6px; border-radius: 3px; background: var(--surface-2); vertical-align: middle; margin-right: 6px; overflow: hidden; }
+.tight-fill { display: block; height: 100%; border-radius: 3px; background: var(--accent); }
+#loading { text-align: center; padding: 48px; color: var(--dim); }
+.foot { margin-top: 20px; font-size: 11px; color: var(--dim); line-height: 1.6; }
+@media (max-width: 720px) { th:nth-child(n+9), td:nth-child(n+9) { display: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">NIGHTLY MARKET SCAN</p>
+  <div class="head-row">
+    <h1>데일리 스캔 리포트</h1>
+    <div class="date-pill">📅 <select id="f-date"></select></div>
+  </div>
+  <div class="dist" id="dist"></div>
+
+  <div class="card">
+    <div class="filters">
+      <div class="f"><span>신호</span>
+        <select id="f-signal">
+          <option value="">전체</option><option value="돌파완료">돌파완료</option>
+          <option value="돌파임박">돌파임박</option><option value="수축중">수축중</option>
+          <option value="관망">관망</option>
+        </select>
+      </div>
+      <div class="f"><span>최소 총점</span><input id="f-score" type="number" value="0" min="0" max="100" style="width:76px"></div>
+      <div class="f"><span>최소 거래대금 (억)</span><input id="f-turnover" type="number" value="0" min="0" style="width:100px"></div>
+      <div class="f"><span>VCP Stage</span>
+        <select id="f-stage"><option value="">전체</option><option>3</option><option>2</option><option>1</option><option>0</option></select>
+      </div>
+      <div class="f"><span>종목 검색</span><input id="f-search" type="text" placeholder="이름 또는 코드" style="width:150px"></div>
+      <div class="f"><span>정렬</span>
+        <select id="f-sort">
+          <option value="scan_score">총점 높은 순</option><option value="turnover_eok">거래대금 순</option>
+          <option value="market_cap_won">시가총액 순</option><option value="pivot_dist_abs">피벗 거리 가까운 순</option>
+          <option value="name">이름 가나다순</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="count-line" id="count"></div>
+  <div id="loading">로딩 중...</div>
+  <div style="overflow-x:auto">
+  <table id="tbl" style="display:none">
+    <thead><tr>
+      <th data-k="name">종목</th><th data-k="signal">신호</th><th data-k="scan_score">총점</th>
+      <th data-k="vcp_stage">Stage</th><th data-k="vcp_quality">Quality</th><th data-k="sepa_score">SEPA</th>
+      <th data-k="pivot_dist">피벗거리%</th><th data-k="close_price">종가</th><th data-k="change_ratio">등락%</th>
+      <th data-k="turnover_eok">거래대금(억)</th><th data-k="latest_volume_ratio">거래량비%</th>
+      <th data-k="atr_contraction">수축</th><th data-k="breakout_volume_ratio">돌파거래량%</th>
+    </tr></thead>
+    <tbody id="body"></tbody>
+  </table>
+  </div>
+  <div class="foot">매일 밤 전 종목 스캔 후 자동 업데이트 · 일봉 캔들 원본은 제외 (용량) · <a href="https://github.com/younggeun/screener-reports-muse" style="color:var(--accent)">GitHub 저장소</a></div>
+</div>
+<script>
+const COLS = ["session_date","code","name","market","close_price","change_ratio","sector_name","turnover_eok","average_turnover_20d_eok","market_cap_won","pivot","pivot_dist","breakout_distance","atr_contraction","base_depth","base_weeks","latest_volume_ratio","sepa_score","vcp_stage","vcp_ready","vcp_quality","signal","scan_score","rs_relative_return","rs_rating","ep_date","ep_gain_percent","ep_volume_multiple","ma10_pullback","breakout_precursor","breakout_date","breakout_pivot","breakout_close","breakout_volume_ratio","sr_flip","sr_flip_level","sr_flip_type","turtle_s1","turtle_s2","turtle_stop1","turtle_stop2"];
+const NUM = new Set(["close_price","change_ratio","turnover_eok","average_turnover_20d_eok","market_cap_won","pivot","pivot_dist","breakout_distance","atr_contraction","base_depth","base_weeks","latest_volume_ratio","sepa_score","vcp_stage","vcp_ready","vcp_quality","scan_score","rs_relative_return","rs_rating","ep_gain_percent","ep_volume_multiple","breakout_pivot","breakout_close","breakout_volume_ratio","sr_flip_level","turtle_stop1","turtle_stop2"]);
+const $ = id => document.getElementById(id);
+let all = [], curSignal = "";
+
+function parseCSV(text) {
+  const rows = []; let row = [], cur = "", q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) { if (c === '"') { if (text[i+1] === '"') { cur += '"'; i++; } else q = false; } else cur += c; }
+    else if (c === '"') q = true;
+    else if (c === ",") { row.push(cur); cur = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (cur !== "" || row.length) { row.push(cur); rows.push(row); row = []; cur = ""; }
+      if (c === "\r" && text[i+1] === "\n") i++;
+    } else cur += c;
+  }
+  if (cur !== "" || row.length) { row.push(cur); rows.push(row); }
+  return rows;
+}
+function grade(s) { s = +s || 0; return s >= 90 ? "s" : s >= 80 ? "a" : s >= 65 ? "b" : s >= 50 ? "c" : "d"; }
+function fmt(n, d=1) { if (n === "" || n == null || isNaN(+n)) return "-"; return (+n).toLocaleString("ko-KR", {maximumFractionDigits: d}); }
+function sigClass(s) { return "sig-" + s.replace(/ /g, ""); }
+
+async function load(date) {
+  $("loading").style.display = ""; $("tbl").style.display = "none"; $("dist").innerHTML = "";
+  const text = await (await fetch(`../scans/${date}/results.csv`)).text();
+  all = parseCSV(text).slice(1).map(r => {
+    const o = {};
+    COLS.forEach((c, i) => o[c] = NUM.has(c) ? (r[i] === "" ? "" : +r[i]) : (r[i] ?? ""));
+    o.pivot_dist_abs = o.pivot_dist === "" ? 9999 : Math.abs(o.pivot_dist);
+    return o;
+  });
+  const dist = {};
+  all.forEach(o => dist[o.signal] = (dist[o.signal] || 0) + 1);
+  const order = ["돌파완료", "돌파임박", "수축중", "관망", "없음", "데이터 부족"];
+  $("dist").innerHTML = order.filter(s => dist[s]).map(s =>
+    `<button class="dist-chip${curSignal === s ? " active" : ""}" data-s="${s}"><span class="sig ${sigClass(s)}">${s}</span><b>${dist[s].toLocaleString()}</b></button>`
+  ).join("");
+  document.querySelectorAll(".dist-chip").forEach(ch => ch.addEventListener("click", () => {
+    curSignal = curSignal === ch.dataset.s ? "" : ch.dataset.s;
+    $("f-signal").value = curSignal;
+    document.querySelectorAll(".dist-chip").forEach(x => x.classList.toggle("active", x.dataset.s === curSignal));
+    render();
+  }));
+  $("loading").style.display = "none"; $("tbl").style.display = "";
+  render();
+}
+
+function render() {
+  const sig = curSignal || $("f-signal").value;
+  const minScore = +$("f-score").value || 0, minTurn = +$("f-turnover").value || 0;
+  const stage = $("f-stage").value, q = $("f-search").value.trim(), sort = $("f-sort").value;
+  let rows = all.filter(o =>
+    (!sig || o.signal === sig) && ((+o.scan_score || 0) >= minScore) &&
+    ((+o.turnover_eok || 0) >= minTurn) && (!stage || String(o.vcp_stage) === stage) &&
+    (!q || o.name.includes(q) || o.code.includes(q)));
+  const asc = sort === "pivot_dist_abs" || sort === "name";
+  rows.sort((a, b) => {
+    if (sort === "name") return String(a.name).localeCompare(String(b.name), "ko");
+    const x = a[sort] === "" ? -Infinity : +a[sort], y = b[sort] === "" ? -Infinity : +b[sort];
+    return asc ? x - y : y - x;
+  });
+  $("count").innerHTML = `총 <b>${rows.length.toLocaleString()}</b> 종목`;
+  $("body").innerHTML = rows.slice(0, 2000).map(o => {
+    const tc = o.atr_contraction === "" ? 0 : Math.min(100, +o.atr_contraction);
+    return `<tr>
+      <td class="name-cell"><b>${o.name}</b><span>${o.code} · ${o.market}</span></td>
+      <td><span class="sig ${sigClass(o.signal)}">${o.signal}</span></td>
+      <td><span class="score-n">${o.scan_score === "" ? "-" : o.scan_score}</span>${o.scan_score !== "" ? `<span class="grade g-${grade(o.scan_score)}">${grade(o.scan_score).toUpperCase()}</span>` : ""}</td>
+      <td>${o.vcp_stage}</td><td>${o.vcp_quality}</td><td>${o.sepa_score}</td>
+      <td>${o.pivot_dist === "" ? "-" : fmt(o.pivot_dist)}</td>
+      <td>${fmt(o.close_price, 0)}</td>
+      <td class="${(+o.change_ratio) >= 0 ? "up" : "down"}">${o.change_ratio === "" ? "-" : fmt(o.change_ratio)}</td>
+      <td>${fmt(o.turnover_eok)}</td>
+      <td>${o.latest_volume_ratio === "" ? "-" : fmt(o.latest_volume_ratio, 0)}</td>
+      <td><span class="tight-bar"><span class="tight-fill" style="width:${tc}%"></span></span>${o.atr_contraction === "" ? "-" : fmt(o.atr_contraction, 0)}</td>
+      <td>${o.breakout_volume_ratio === "" ? "-" : fmt(o.breakout_volume_ratio, 0)}</td>
+    </tr>`;
+  }).join("");
+}
+
+["f-signal","f-score","f-turnover","f-stage","f-sort"].forEach(id =>
+  $(id).addEventListener("change", () => { if (id === "f-signal") { curSignal = $("f-signal").value;
+    document.querySelectorAll(".dist-chip").forEach(x => x.classList.toggle("active", x.dataset.s === curSignal)); } render(); }));
+$("f-search").addEventListener("input", render);
+$("f-date").addEventListener("change", e => { curSignal = ""; $("f-signal").value = ""; load(e.target.value); });
+document.querySelectorAll("th[data-k]").forEach(th => th.addEventListener("click", () => {
+  const k = th.dataset.k === "pivot_dist" ? "pivot_dist_abs" : th.dataset.k;
+  $("f-sort").value = k; render();
+}));
+
+(async () => {
+  const dates = await (await fetch("../scans/manifest.json")).json();
+  $("f-date").innerHTML = dates.map(d => `<option value="${d}">${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}</option>`).join("");
+  load(dates[dates.length - 1]);
+})();
+</script>
+</body>
+</html>
