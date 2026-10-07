@@ -138,6 +138,7 @@ const COLS = ["session_date","code","name","market","close_price","change_ratio"
 const NUM = new Set(["close_price","change_ratio","turnover_eok","average_turnover_20d_eok","market_cap_won","pivot","pivot_dist","breakout_distance","atr_contraction","base_depth","base_weeks","latest_volume_ratio","sepa_score","vcp_stage","vcp_ready","vcp_quality","scan_score","rs_relative_return","rs_rating","ep_gain_percent","ep_volume_multiple","breakout_pivot","breakout_close","breakout_volume_ratio","sr_flip_level","turtle_stop1","turtle_stop2"]);
 const $ = id => document.getElementById(id);
 let all = [], curSignal = "";
+const BASE = "https://raw.githubusercontent.com/younggeun/screener-reports-muse/main";
 
 function parseCSV(text) {
   const rows = []; let row = [], cur = "", q = false;
@@ -160,7 +161,7 @@ function sigClass(s) { return "sig-" + s.replace(/ /g, ""); }
 
 async function load(date) {
   $("loading").style.display = ""; $("tbl").style.display = "none"; $("dist").innerHTML = "";
-  const text = await (await fetch(`../scans/${date}/results.csv`)).text();
+  const text = await (await fetch(`${BASE}/scans/${date}/results.csv`)).text();
   all = parseCSV(text).slice(1).map(r => {
     const o = {};
     COLS.forEach((c, i) => o[c] = NUM.has(c) ? (r[i] === "" ? "" : +r[i]) : (r[i] ?? ""));
@@ -227,7 +228,7 @@ document.querySelectorAll("th[data-k]").forEach(th => th.addEventListener("click
 }));
 
 (async () => {
-  const dates = await (await fetch("../scans/manifest.json")).json();
+  const dates = await (await fetch(`${BASE}/scans/manifest.json`)).json();
   $("f-date").innerHTML = dates.map(d => `<option value="${d}">${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}</option>`).join("");
   load(dates[dates.length - 1]);
 })();
