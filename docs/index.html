@@ -35,7 +35,8 @@ h1 { margin: 0; font-size: clamp(26px, 6vw, 40px); letter-spacing: -.03em; font-
 .head-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .date-pill { display: flex; align-items: center; gap: 8px; background: var(--surface);
   border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; font-size: 13px; font-weight: 700; }
-.date-pill select { border: none; background: transparent; color: inherit; font: inherit; font-weight: 700; cursor: pointer; }
+.date-pill input[type="date"] { border: none; background: transparent; color: inherit; font: inherit; font-weight: 700; cursor: pointer; }
+.date-pill input[type="date"]:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 6px; }
 .dist { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 4px; }
 .dist-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
   background: var(--surface); border: 1px solid var(--border); font-size: 12px; font-weight: 700; cursor: pointer; }
@@ -88,7 +89,7 @@ tbody tr:last-child td { border-bottom: none; }
   <p class="eyebrow">NIGHTLY MARKET SCAN</p>
   <div class="head-row">
     <h1>데일리 스캔 리포트</h1>
-    <div class="date-pill">📅 <select id="f-date"></select></div>
+    <div class="date-pill">📅 <input type="date" id="f-date"><span id="date-note" style="font-size:11px;color:var(--dim);font-weight:400"></span></div>
   </div>
   <div class="dist" id="dist"></div>
 
@@ -221,16 +222,30 @@ function render() {
   $(id).addEventListener("change", () => { if (id === "f-signal") { curSignal = $("f-signal").value;
     document.querySelectorAll(".dist-chip").forEach(x => x.classList.toggle("active", x.dataset.s === curSignal)); } render(); }));
 $("f-search").addEventListener("input", render);
-$("f-date").addEventListener("change", e => { curSignal = ""; $("f-signal").value = ""; load(e.target.value); });
+let DATES = [];
+function toD8(iso) { return iso.replace(/-/g, ""); }
+function toISO(d8) { return `${d8.slice(0,4)}-${d8.slice(4,6)}-${d8.slice(6,8)}`; }
+$("f-date").addEventListener("change", e => {
+  const picked = toD8(e.target.value);
+  // snap to nearest available scan on or before picked date
+  let target = [...DATES].reverse().find(d => d <= picked) || DATES[DATES.length - 1];
+  if (target !== picked) {
+    $("date-note").textContent = `해당일 스캔 없음 → ${toISO(target)} 표시`;
+    e.target.value = toISO(target);
+  } else $("date-note").textContent = "";
+  curSignal = ""; $("f-signal").value = ""; load(target);
+});
 document.querySelectorAll("th[data-k]").forEach(th => th.addEventListener("click", () => {
   const k = th.dataset.k === "pivot_dist" ? "pivot_dist_abs" : th.dataset.k;
   $("f-sort").value = k; render();
 }));
 
 (async () => {
-  const dates = await (await fetch(`${BASE}/scans/manifest.json`)).json();
-  $("f-date").innerHTML = dates.map(d => `<option value="${d}">${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}</option>`).join("");
-  load(dates[dates.length - 1]);
+  DATES = await (await fetch(`${BASE}/scans/manifest.json`)).json();
+  const di = $("f-date");
+  di.min = toISO(DATES[0]); di.max = toISO(DATES[DATES.length - 1]);
+  di.value = toISO(DATES[DATES.length - 1]);
+  load(DATES[DATES.length - 1]);
 })();
 </script>
 </body>
