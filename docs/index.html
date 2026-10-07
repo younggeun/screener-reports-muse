@@ -90,7 +90,43 @@ tbody tr:last-child td { border-bottom: none; }
 .up { color: var(--risk); } .down { color: var(--cool); }
 .tight-bar { display: inline-block; width: 44px; height: 6px; border-radius: 3px; background: var(--surface-2); vertical-align: middle; margin-right: 6px; overflow: hidden; }
 .tight-fill { display: block; height: 100%; border-radius: 3px; background: var(--accent); }
+.gauge-wrap { margin: 10px 0 4px; }
+.gauge-num { font-size: 34px; font-weight: 800; letter-spacing: -.02em; }
+.gauge-num small { font-size: 14px; color: var(--dim); font-weight: 700; }
+.gauge-bar { height: 10px; border-radius: 5px; background: var(--surface-2); overflow: hidden; margin-top: 8px; }
+.gauge-fill { display: block; height: 100%; border-radius: 5px; background: var(--accent); }
+.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-top: 10px; }
+.metric { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+.metric span { display: block; font-size: 11px; color: var(--dim); font-weight: 700; margin-bottom: 4px; }
+.metric b { font-size: 17px; }
+.insufficient { opacity: .55; }
+.insuf-tag { display: inline-block; font-size: 11px; font-weight: 800; color: var(--dim);
+  background: var(--surface-2); border-radius: 999px; padding: 2px 10px; margin-left: 8px; vertical-align: 2px; }
 #loading { text-align: center; padding: 48px; color: var(--dim); }
+tbody tr[data-code] { cursor: pointer; }
+.modal-ov { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: none;
+  align-items: flex-end; justify-content: center; z-index: 50; }
+.modal-ov.open { display: flex; }
+.modal { background: var(--surface); color: var(--text); width: min(640px, 100%);
+  max-height: 88vh; overflow-y: auto; border-radius: 16px 16px 0 0; padding: 20px 18px 32px; }
+@media (min-width: 720px) { .modal-ov { align-items: center; padding: 24px; } .modal { border-radius: 16px; } }
+.modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+.modal-head h2 { margin: 0; font-size: 20px; letter-spacing: -.02em; }
+.modal-head .meta { font-size: 12px; color: var(--dim); margin-top: 4px; }
+.modal-x { border: 1px solid var(--border); background: var(--bg); color: var(--text);
+  border-radius: 8px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
+.why-list { margin: 12px 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.why-list li { background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 10px 12px; font-size: 13px; line-height: 1.55; }
+.why-list li b { color: var(--accent); }
+.d-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0; }
+.d-cell { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
+.d-cell span { display: block; font-size: 11px; color: var(--dim); margin-bottom: 4px; }
+.d-cell b { font-size: 15px; }
+.d-sec { font-size: 12px; font-weight: 800; color: var(--accent); margin: 16px 0 8px; letter-spacing: .02em; }
+.d-row { display: flex; justify-content: space-between; font-size: 13px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+.d-row:last-child { border-bottom: none; }
+.d-row span:first-child { color: var(--dim); }
 .foot { margin-top: 20px; font-size: 11px; color: var(--dim); line-height: 1.6; }
 @media (max-width: 720px) { th:nth-child(n+9), td:nth-child(n+9) { display: none; } }
 </style>
@@ -106,6 +142,7 @@ tbody tr:last-child td { border-bottom: none; }
     <button class="tab active" data-view="daily">일간</button>
     <button class="tab" data-view="weekly">주간</button>
     <button class="tab" data-view="monthly">월간</button>
+    <button class="tab" data-view="winrate">승률</button>
   </div>
   <div id="view-daily">
   <div class="dist" id="dist"></div>
@@ -201,8 +238,33 @@ tbody tr:last-child td { border-bottom: none; }
     </div>
   </div><!-- /view-monthly -->
 
+  <div id="view-winrate" style="display:none">
+    <div class="period-line" id="wr-period"></div>
+    <p class="sec-sub" style="margin:4px 2px 0">신호의 실제 적중률을 검증합니다 — 스캔 데이터가 쌓일수록 정확해져요. 표본 30개 미만 지표는 회색으로 표시돼요.</p>
+    <div class="card" id="wr-card-near">
+      <p class="sec-title">🎯 돌파임박 → 돌파완료 전환율 <span id="wr-near-tag"></span></p>
+      <p class="sec-sub">돌파임박 신호 후 10거래일 내 돌파완료로 전환된 비율</p>
+      <div id="wr-near-body"></div>
+    </div>
+    <div class="card" id="wr-card-ft">
+      <p class="sec-title">📊 돌파완료 후 수익률 <span id="wr-ft-tag"></span></p>
+      <p class="sec-sub">돌파 종가 대비 +5/+10/+20거래일 수익률 · 손절 도달 = 기간 내 종가가 피벗×0.92 아래로 마감</p>
+      <div style="overflow-x:auto"><table><thead><tr>
+        <th>기간</th><th>표본</th><th>평균</th><th>중앙값</th><th>승률</th><th>손절 도달률</th>
+      </tr></thead><tbody id="wr-ft"></tbody></table></div>
+    </div>
+    <div class="card" id="wr-card-grade">
+      <p class="sec-title">🏅 등급별 +10일 승률 <span id="wr-grade-tag"></span></p>
+      <p class="sec-sub">돌파완료 신호의 총점 등급별 10거래일 후 수익 발생 비율</p>
+      <div style="overflow-x:auto"><table><thead><tr>
+        <th>등급</th><th>표본</th><th>승률</th><th>평균 수익률</th>
+      </tr></thead><tbody id="wr-grade"></tbody></table></div>
+    </div>
+  </div><!-- /view-winrate -->
+
   <div class="foot">매일 밤 전 종목 스캔 후 자동 업데이트 · 일봉 캔들 원본은 제외 (용량) · <a href="https://github.com/younggeun/screener-reports-muse" style="color:var(--accent)">GitHub 저장소</a></div>
 </div>
+<div class="modal-ov" id="modal-ov"><div class="modal" id="modal"></div></div>
 <script>
 const COLS = ["session_date","code","name","market","close_price","change_ratio","sector_name","turnover_eok","average_turnover_20d_eok","market_cap_won","pivot","pivot_dist","breakout_distance","atr_contraction","base_depth","base_weeks","latest_volume_ratio","sepa_score","vcp_stage","vcp_ready","vcp_quality","signal","scan_score","rs_relative_return","rs_rating","ep_date","ep_gain_percent","ep_volume_multiple","ma10_pullback","breakout_precursor","breakout_date","breakout_pivot","breakout_close","breakout_volume_ratio","sr_flip","sr_flip_level","sr_flip_type","turtle_s1","turtle_s2","turtle_stop1","turtle_stop2"];
 const NUM = new Set(["close_price","change_ratio","turnover_eok","average_turnover_20d_eok","market_cap_won","pivot","pivot_dist","breakout_distance","atr_contraction","base_depth","base_weeks","latest_volume_ratio","sepa_score","vcp_stage","vcp_ready","vcp_quality","scan_score","rs_relative_return","rs_rating","ep_gain_percent","ep_volume_multiple","breakout_pivot","breakout_close","breakout_volume_ratio","sr_flip_level","turtle_stop1","turtle_stop2"]);
@@ -271,7 +333,7 @@ function render() {
   $("count").innerHTML = `총 <b>${rows.length.toLocaleString()}</b> 종목`;
   $("body").innerHTML = rows.slice(0, 2000).map(o => {
     const tc = o.atr_contraction === "" ? 0 : Math.min(100, +o.atr_contraction);
-    return `<tr>
+    return `<tr data-code="${o.code}">
       <td class="name-cell"><b>${o.name}</b><span>${o.code} · ${o.market}</span></td>
       <td><span class="sig ${sigClass(o.signal)}">${o.signal}</span></td>
       <td><span class="score-n">${o.scan_score === "" ? "-" : o.scan_score}</span>${o.scan_score !== "" ? `<span class="grade g-${grade(o.scan_score)}">${grade(o.scan_score).toUpperCase()}</span>` : ""}</td>
@@ -316,6 +378,78 @@ document.querySelectorAll("th[data-k]").forEach(th => th.addEventListener("click
   di.value = toISO(DATES[DATES.length - 1]);
   load(DATES[DATES.length - 1]);
 })();
+
+function volGrade(r) {
+  r = +r || 0;
+  return r >= 200 ? "VERY STRONG" : r >= 150 ? "STRONG" : r >= 120 ? "NORMAL" : r >= 100 ? "WEAK" : "VERY WEAK";
+}
+function whyBullets(o) {
+  const b = [];
+  if (o.signal === "돌파완료") b.push(`<b>돌파완료</b> — 피벗 ${fmt(o.breakout_pivot, 0)}원을 종가로 돌파 확정 (거래량 ${volGrade(o.breakout_volume_ratio)}${o.breakout_volume_ratio !== "" ? ` ${fmt(o.breakout_volume_ratio, 0)}%` : ""})`);
+  else if (o.signal === "돌파임박") b.push(`<b>돌파임박</b> — Stage ${o.vcp_stage} 수축 구조, 피벗 대비 ${fmt(o.pivot_dist)}% 위치`);
+  else if (o.signal === "수축중") b.push(`<b>수축중</b> — Stage ${o.vcp_stage}, 변동성 수축 진행 중`);
+  else if (o.signal === "관망") b.push(`관망 — 현재 진입 신호 없음`);
+  if (o.vcp_stage === 3) b.push(`VCP <b>Stage 3</b> — 3개 이상 수축 + 전체 압축 구조 완성`);
+  else if (o.vcp_stage === 2) b.push(`VCP Stage 2 — 수축 진행 중`);
+  if (o.vcp_ready) b.push(`<b>VCP READY</b> — 돌파 감시 조건 충족`);
+  if (+o.sepa_score >= 5) b.push(`SEPA <b>${o.sepa_score}점</b> — 추세 조건 강함`);
+  else if (o.sepa_score !== "") b.push(`SEPA ${o.sepa_score}점`);
+  if (+o.atr_contraction >= 40) b.push(`ATR <b>${fmt(o.atr_contraction, 0)}% 압축</b> — 변동성 크게 감소`);
+  if (o.latest_volume_ratio !== "" && +o.latest_volume_ratio <= 80) b.push(`당일 거래량 ${fmt(o.latest_volume_ratio, 0)}% — 수축 중 (50일 평균 대비)`);
+  if (+o.rs_rating >= 70) b.push(`RS 등급 <b>${o.rs_rating}</b> — 시장 대비 강함`);
+  if (o.ep_date) b.push(`EP ${o.ep_date} — 당일 +${fmt(o.ep_gain_percent)}%, 거래량 ${fmt(o.ep_volume_multiple, 1)}배`);
+  if (o.sr_flip) b.push(`S/R 플립 — ${fmt(o.sr_flip_level, 0)}원 지지 전환${o.sr_flip_type ? ` (${o.sr_flip_type})` : ""}`);
+  if (o.turtle_s1 || o.turtle_s2) b.push(`터틀 돌파 — ${[o.turtle_s1 ? "S1(20일)" : "", o.turtle_s2 ? "S2(55일)" : ""].filter(Boolean).join(" + ")}`);
+  if (o.breakout_precursor) b.push(`돌파 전조 감지됨`);
+  return b.length ? b : ["특이 신호 없음 — 로우데이터에서 직접 확인"];
+}
+function openDetail(code) {
+  const o = all.find(x => x.code === code);
+  if (!o) return;
+  const stop = o.pivot !== "" ? Math.round(o.pivot * 0.92) : "";
+  const stopDist = (stop !== "" && o.close_price !== "") ? ((o.close_price - stop) / o.close_price * 100) : "";
+  const g = grade(o.scan_score);
+  let h = `<div class="modal-head"><div><h2>${o.name}</h2>
+    <div class="meta">${o.code} · ${o.market}${o.sector_name ? ` · ${o.sector_name}` : ""} · 기준 ${String(o.session_date).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")}</div></div>
+    <button class="modal-x" onclick="closeDetail()">닫기</button></div>
+    <div><span class="sig ${sigClass(o.signal)}">${o.signal}</span>
+    ${o.scan_score !== "" ? `<span class="grade g-${g}" style="margin-left:6px">${o.scan_score} / ${g.toUpperCase()}</span>` : ""}</div>
+    <p class="d-sec">왜 후보로 잡혔나</p>
+    <ul class="why-list">${whyBullets(o).map(x => `<li>${x}</li>`).join("")}</ul>
+    <p class="d-sec">핵심 지표</p>
+    <div class="d-grid">
+      <div class="d-cell"><span>VCP Stage</span><b>${o.vcp_stage}</b></div>
+      <div class="d-cell"><span>VCP Quality</span><b>${o.vcp_quality === "" ? "-" : o.vcp_quality}</b></div>
+      <div class="d-cell"><span>SEPA</span><b>${o.sepa_score}</b></div>
+      <div class="d-cell"><span>RS 등급</span><b>${o.rs_rating === "" ? "-" : o.rs_rating}</b></div>
+      <div class="d-cell"><span>피벗</span><b>${o.pivot === "" ? "-" : fmt(o.pivot, 0)}</b></div>
+      <div class="d-cell"><span>피벗거리</span><b>${o.pivot_dist === "" ? "-" : fmt(o.pivot_dist) + "%"}</b></div>
+      <div class="d-cell"><span>ATR 압축</span><b>${o.atr_contraction === "" ? "-" : fmt(o.atr_contraction, 0) + "%"}</b></div>
+      <div class="d-cell"><span>베이스 깊이</span><b>${o.base_depth === "" ? "-" : fmt(o.base_depth) + "%"}</b></div>
+      <div class="d-cell"><span>베이스 기간</span><b>${o.base_weeks === "" ? "-" : fmt(o.base_weeks, 1) + "주"}</b></div>
+    </div>`;
+  if (stop !== "") h += `<p class="d-sec">손절 참고</p>
+    <div class="d-row"><span>손절가 (피벗 × 0.92)</span><b>${fmt(stop, 0)}원</b></div>
+    <div class="d-row"><span>현 종가 대비</span><b class="${stopDist >= 0 ? "down" : "up"}">${stopDist === "" ? "-" : fmt(stopDist) + "%"}</b></div>`;
+  h += `<p class="d-sec">거래량</p>
+    <div class="d-row"><span>당일 거래량비 (50일 평균)</span><b>${o.latest_volume_ratio === "" ? "-" : fmt(o.latest_volume_ratio, 0) + "%"}</b></div>
+    <div class="d-row"><span>거래대금</span><b>${fmt(o.turnover_eok)}억</b></div>
+    <div class="d-row"><span>20일 평균 거래대금</span><b>${o.average_turnover_20d_eok === "" ? "-" : fmt(o.average_turnover_20d_eok) + "억"}</b></div>`;
+  if (o.signal === "돌파완료" && o.breakout_date) h += `<p class="d-sec">돌파 정보</p>
+    <div class="d-row"><span>돌파일</span><b>${o.breakout_date}</b></div>
+    <div class="d-row"><span>돌파 피벗 → 종가</span><b>${fmt(o.breakout_pivot, 0)} → ${fmt(o.breakout_close, 0)}원</b></div>
+    <div class="d-row"><span>돌파 거래량</span><b>${o.breakout_volume_ratio === "" ? "-" : fmt(o.breakout_volume_ratio, 0) + "%"} · ${volGrade(o.breakout_volume_ratio)}</b></div>`;
+  $("modal").innerHTML = h;
+  $("modal-ov").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeDetail() { $("modal-ov").classList.remove("open"); document.body.style.overflow = ""; }
+$("modal-ov").addEventListener("click", e => { if (e.target.id === "modal-ov") closeDetail(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeDetail(); });
+$("body").addEventListener("click", e => {
+  const tr = e.target.closest("tr[data-code]");
+  if (tr) openDetail(tr.dataset.code);
+});
 
 /* ---- weekly / monthly aggregate views ---- */
 const aggCache = {};
@@ -368,9 +502,66 @@ document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () =>
   $("view-daily").style.display = v === "daily" ? "" : "none";
   $("view-weekly").style.display = v === "weekly" ? "" : "none";
   $("view-monthly").style.display = v === "monthly" ? "" : "none";
+  $("view-winrate").style.display = v === "winrate" ? "" : "none";
   if (v === "weekly") renderAgg("weekly");
   if (v === "monthly") renderAgg("monthly");
+  if (v === "winrate") renderWinrate();
 }));
+
+function insufTag(b) { return b ? `<span class="insuf-tag">표본 부족</span>` : ""; }
+function pctCell(v) { return v == null ? "-" : `${v >= 0 ? "+" : ""}${fmt(v)}%`; }
+
+async function renderWinrate() {
+  $("wr-period").innerHTML = "불러오는 중...";
+  try {
+    const d = await (await fetch(`${BASE}/scans/winrate/latest.json`)).json();
+    $("wr-period").innerHTML =
+      `<b>포워드 테스트</b> · 스캔 ${d.total_scans}일 (${d8label(d.date_range.first)} ~ ${d8label(d.date_range.last)})`;
+    // 1) near -> breakout
+    const n = d.near_to_breakout;
+    $("wr-near-tag").innerHTML = insufTag(n.insufficient);
+    $("wr-card-near").classList.toggle("insufficient", !!n.insufficient);
+    const rate = n.rate_pct == null ? 0 : n.rate_pct;
+    const stageRows = Object.entries(n.by_stage || {}).map(([s, v]) =>
+      `<div class="metric"><span>Stage ${s} (${v.total}건)</span><b>${v.rate_pct == null ? "-" : v.rate_pct + "%"}</b></div>`
+    ).join("");
+    $("wr-near-body").innerHTML = n.total === 0
+      ? `<div class="empty-note">아직 검증 데이터가 없어요. 스캔이 쌓이면 표시됩니다.</div>`
+      : `<div class="gauge-wrap"><div class="gauge-num">${n.rate_pct == null ? "-" : n.rate_pct}<small>% (${n.converted}/${n.total})</small></div>
+         <div class="gauge-bar"><span class="gauge-fill" style="width:${rate}%"></span></div></div>
+         ${stageRows ? `<div class="metric-grid">${stageRows}</div>` : ""}`;
+    // 2) follow-through
+    const ft = d.breakout_followthrough || {};
+    const labels = {plus_5d: "+5일", plus_10d: "+10일", plus_20d: "+20일"};
+    const ftKeys = Object.keys(labels);
+    const ftInsuf = ftKeys.every(k => !ft[k] || ft[k].insufficient);
+    $("wr-ft-tag").innerHTML = insufTag(ftInsuf);
+    $("wr-card-ft").classList.toggle("insufficient", !!ftInsuf);
+    $("wr-ft").innerHTML = ftKeys.map(k => {
+      const v = ft[k];
+      if (!v) return `<tr><td>${labels[k]}</td><td colspan="5"><span style="color:var(--dim)">표본 부족</span></td></tr>`;
+      return `<tr><td><b>${labels[k]}</b></td><td>${v.n}</td>
+        <td class="${v.avg_pct >= 0 ? "up" : "down"}">${pctCell(v.avg_pct)}</td>
+        <td class="${v.median_pct >= 0 ? "up" : "down"}">${pctCell(v.median_pct)}</td>
+        <td><b>${v.win_rate_pct == null ? "-" : v.win_rate_pct + "%"}</b></td>
+        <td>${v.stop_hit_pct == null ? "-" : v.stop_hit_pct + "%"}</td></tr>`;
+    }).join("");
+    // 3) by grade
+    const g = d.by_grade || {};
+    const gKeys = ["S", "A", "B", "C"];
+    const gInsuf = gKeys.every(k => !g[k] || g[k].insufficient);
+    $("wr-grade-tag").innerHTML = insufTag(gInsuf);
+    $("wr-card-grade").classList.toggle("insufficient", !!gInsuf);
+    $("wr-grade").innerHTML = gKeys.map(k => {
+      const v = g[k] || {};
+      return `<tr><td><span class="grade g-${k.toLowerCase()}">${k}</span></td><td>${v.n || 0}</td>
+        <td><b>${v.win_rate_pct == null ? "-" : v.win_rate_pct + "%"}</b></td>
+        <td class="${(v.avg_pct || 0) >= 0 ? "up" : "down"}">${pctCell(v.avg_pct)}</td></tr>`;
+    }).join("");
+  } catch (e) {
+    $("wr-period").innerHTML = "승률 데이터를 불러오지 못했어요";
+  }
+}
 </script>
 </body>
 </html>
