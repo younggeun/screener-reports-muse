@@ -130,6 +130,19 @@ tbody tr[data-code] { cursor: pointer; }
 .d-row:last-child { border-bottom: none; }
 .d-row span:first-child { color: var(--dim); }
 .foot { margin-top: 20px; font-size: 11px; color: var(--dim); line-height: 1.6; }
+.diff-banner { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 12px;
+  padding: 12px 16px; margin: 12px 0; font-weight: 800; font-size: 14px; cursor: pointer; }
+.diff-chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 4px; }
+.diff-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px; margin-top: 10px; cursor: pointer; display: flex;
+  justify-content: space-between; gap: 10px; align-items: center; }
+.diff-card:hover { border-color: var(--accent); }
+.dtag { display: inline-block; font-size: 11px; font-weight: 700; border-radius: 6px;
+  padding: 2px 8px; margin: 4px 4px 0 0; background: var(--surface-2); color: var(--dim); }
+.dtag-pivot { background: var(--warning-soft); color: var(--warning); }
+.dtag-ready { background: var(--accent-soft); color: var(--accent); }
+.diff-score { font-size: 22px; font-weight: 800; text-align: right; white-space: nowrap; }
+.diff-delta { font-size: 13px; font-weight: 700; text-align: right; margin-top: 2px; white-space: nowrap; }
 @media (max-width: 720px) { th:nth-child(n+9), td:nth-child(n+9) { display: none; } }
 </style>
 </head>
@@ -145,6 +158,7 @@ tbody tr[data-code] { cursor: pointer; }
     <button class="tab" data-view="weekly">주간</button>
     <button class="tab" data-view="monthly">월간</button>
     <button class="tab" data-view="winrate">승률</button>
+    <button class="tab" data-view="diff">비교</button>
   </div>
   <div id="view-daily">
   <div class="dist" id="dist"></div>
@@ -263,6 +277,19 @@ tbody tr[data-code] { cursor: pointer; }
       </tr></thead><tbody id="wr-grade"></tbody></table></div>
     </div>
   </div><!-- /view-winrate -->
+
+  <div id="view-diff" style="display:none">
+    <div class="period-line" id="diff-period"></div>
+    <div class="diff-banner" id="diff-banner" style="display:none"></div>
+    <div class="diff-chips" id="diff-chips"></div>
+    <div class="card">
+      <div class="filters">
+        <div class="f"><span>변화 종목 검색</span><input id="diff-search" type="text" placeholder="이름 또는 코드" style="width:150px"></div>
+      </div>
+    </div>
+    <div class="count-line" id="diff-count"></div>
+    <div id="diff-list"></div>
+  </div><!-- /view-diff -->
 
   <div class="foot">매일 밤 전 종목 스캔 후 자동 업데이트 · 일봉 캔들 원본은 제외 (용량) · <a href="https://github.com/younggeun/screener-reports-muse" style="color:var(--accent)">GitHub 저장소</a></div>
 </div>
@@ -405,8 +432,8 @@ function whyBullets(o) {
   if (o.breakout_precursor) b.push(`돌파 전조 감지됨`);
   return b.length ? b : ["특이 신호 없음 — 로우데이터에서 직접 확인"];
 }
-function openDetail(code) {
-  const o = all.find(x => x.code === code);
+function openDetail(code, src) {
+  const o = (src || all).find(x => x.code === code);
   if (!o) return;
   const stop = o.pivot !== "" ? Math.round(o.pivot * 0.92) : "";
   const stopDist = (stop !== "" && o.close_price !== "") ? ((o.close_price - stop) / o.close_price * 100) : "";
@@ -505,9 +532,11 @@ document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () =>
   $("view-weekly").style.display = v === "weekly" ? "" : "none";
   $("view-monthly").style.display = v === "monthly" ? "" : "none";
   $("view-winrate").style.display = v === "winrate" ? "" : "none";
+  $("view-diff").style.display = v === "diff" ? "" : "none";
   if (v === "weekly") renderAgg("weekly");
   if (v === "monthly") renderAgg("monthly");
   if (v === "winrate") renderWinrate();
+  if (v === "diff") renderDiff();
 }));
 
 function insufTag(b) { return b ? `<span class="insuf-tag">표본 부족</span>` : ""; }
@@ -564,6 +593,105 @@ async function renderWinrate() {
     $("wr-period").innerHTML = "승률 데이터를 불러오지 못했어요";
   }
 }
+
+/* ---- diff (compare) view: day-over-day changes ---- */
+let diffData = null, diffAll = [], diffCat = "", diffQ = "";
+const DIFF_CATS = [
+  ["new_ready", "🎯 READY·임박"],
+  ["new_entries", "+ 신규"],
+  ["dropped", "− 이탈"],
+  ["signal_changes", "⇅ 신호 변경"],
+  ["score_moves", "± 점수 변동"],
+  ["pivot_changes", "Pivot 변경"],
+];
+
+async function renderDiff() {
+  $("diff-period").innerHTML = "불러오는 중...";
+  try {
+    if (!diffData) {
+      diffData = await (await fetch(`${BASE}/scans/diff/latest.json`)).json();
+      const text = await (await fetch(`${BASE}/scans/${diffData.to_date}/results.csv`)).text();
+      diffAll = parseCSV(text).slice(1).map(r => {
+        const o = {};
+        COLS.forEach((c, i) => o[c] = NUM.has(c) ? (r[i] === "" ? "" : +r[i]) : (r[i] ?? ""));
+        return o;
+      });
+    }
+    $("diff-period").innerHTML =
+      `<b>전일 대비</b> · ${toISO(diffData.from_date)} → ${toISO(diffData.to_date)} · 먼저 볼 순서로 정렬`;
+    const n = diffData.counts.new_ready || 0;
+    const bn = $("diff-banner");
+    if (n > 0) {
+      bn.style.display = "";
+      bn.innerHTML = `🎯 새 READY·돌파임박 ${n}개 · 먼저 확인`;
+      bn.onclick = () => {
+        diffCat = "new_ready";
+        document.querySelectorAll("#diff-chips .dist-chip").forEach(x => x.classList.toggle("active", x.dataset.c === "new_ready"));
+        renderDiffList();
+      };
+    } else bn.style.display = "none";
+    $("diff-chips").innerHTML =
+      `<button class="dist-chip${diffCat === "" ? " active" : ""}" data-c="">전체<b>${diffData.items.length}</b></button>` +
+      DIFF_CATS.map(([k, label]) => {
+        const c = diffData.counts[k] || 0;
+        return `<button class="dist-chip${diffCat === k ? " active" : ""}" data-c="${k}">${label}<b>${c}</b></button>`;
+      }).join("");
+    document.querySelectorAll("#diff-chips .dist-chip").forEach(ch => ch.addEventListener("click", () => {
+      diffCat = ch.dataset.c;
+      document.querySelectorAll("#diff-chips .dist-chip").forEach(x => x.classList.toggle("active", x === ch));
+      renderDiffList();
+    }));
+    renderDiffList();
+  } catch (e) {
+    $("diff-period").innerHTML = "비교 데이터를 불러오지 못했어요";
+  }
+}
+
+function diffSigHtml(i) {
+  if (i.cat === "signal_changes")
+    return `<span class="sig ${sigClass(i.from_signal)}">${i.from_signal}</span> <span style="color:var(--dim)">→</span> <span class="sig ${sigClass(i.to_signal)}">${i.to_signal}</span>`;
+  if (i.cat === "new_entries")
+    return `<span class="sig ${sigClass(i.signal)}">${i.signal}</span> <span class="dtag dtag-ready">신규</span>`;
+  if (i.cat === "dropped")
+    return `<span class="sig ${sigClass(i.signal)}">${i.signal}</span> <span class="dtag">이탈</span>`;
+  return `<span class="sig ${sigClass(i.signal)}">${i.signal}</span>`;
+}
+
+function renderDiffList() {
+  let items = diffData.items.filter(i =>
+    (!diffCat || i.cat === diffCat) &&
+    (!diffQ || i.name.includes(diffQ) || i.code.includes(diffQ)));
+  items.sort((a, b) => (a.priority - b.priority)
+    || (Math.abs(b.score_delta || 0) - Math.abs(a.score_delta || 0))
+    || ((b.turnover_eok || 0) - (a.turnover_eok || 0)));
+  $("diff-count").innerHTML = `총 <b>${items.length.toLocaleString()}</b>건 · 카드를 누르면 상세 보기`;
+  $("diff-list").innerHTML = items.map(i => {
+    const tags = (i.flags || []).map(f =>
+      f === "ready" && i.cat !== "new_ready" ? `<span class="dtag dtag-ready">🎯 READY</span>` :
+      f === "pivot" ? `<span class="dtag dtag-pivot">Pivot 변경</span>` : "").join("");
+    const d = i.score_delta;
+    const dTxt = d == null ? "-" : `${d >= 0 ? "↑ +" : "↓ "}${fmt(d, 2)}`;
+    const dir = i.direction
+      ? ` <span style="font-size:11px;color:${i.direction === "상향" ? "var(--risk)" : "var(--cool)"};font-weight:800">${i.direction}</span>` : "";
+    return `<div class="diff-card" data-code="${i.code}">
+      <div>
+        <b style="font-size:15px">${i.name}</b>
+        <div style="font-size:11px;color:var(--dim);margin:2px 0 6px">${i.code} · ${i.market || ""}</div>
+        <div>${diffSigHtml(i)}${dir}${tags ? "<br>" + tags : ""}</div>
+      </div>
+      <div>
+        <div class="diff-score">${i.scan_score == null ? "-" : i.scan_score}</div>
+        <div class="diff-delta ${d == null ? "" : d >= 0 ? "up" : "down"}">${dTxt}</div>
+      </div>
+    </div>`;
+  }).join("") || `<div class="empty-note">해당 조건의 변화가 없어요</div>`;
+}
+
+$("diff-search").addEventListener("input", e => { diffQ = e.target.value.trim(); renderDiffList(); });
+$("diff-list").addEventListener("click", e => {
+  const card = e.target.closest(".diff-card");
+  if (card) openDetail(card.dataset.code, diffAll);
+});
 </script>
 </body>
 </html>
