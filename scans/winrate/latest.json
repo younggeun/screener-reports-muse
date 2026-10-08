@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-10-07T23:06:22+00:00",
+  "generated_at": "2026-10-08T15:29:39+00:00",
   "date_range": {
     "first": "20261006",
-    "last": "20261007"
+    "last": "20261008"
   },
-  "total_scans": 2,
+  "total_scans": 3,
   "min_samples": 30,
   "near_to_breakout": {
     "total": 0,
@@ -45,5 +45,5 @@
       "insufficient": true
     }
   },
-  "sample_note": "Forward test on 2 scans (20261006~20261007). Each (stock, signal date) is an independent sample; returns use later scans' close prices on a trading-day basis. Metrics with n<30 are marked insufficient."
+  "sample_note": "Forward test on 3 scans (20261006~20261008). Each (stock, signal date) is an independent sample; returns use later scans' close prices on a trading-day basis. Metrics with n<30 are marked insufficient."
 }
