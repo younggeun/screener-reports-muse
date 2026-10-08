@@ -80,6 +80,8 @@ tbody tr:last-child td { border-bottom: none; }
 .sig-관망 { background: var(--surface-2); color: var(--dim); }
 .sig-없음 { background: transparent; color: var(--dim); }
 .sig-데이터부족 { background: var(--surface-2); color: var(--dim); }
+.ready-badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 10px; font-weight: 800;
+  background: var(--accent); color: #fff; margin-left: 4px; vertical-align: 1px; }
 .grade { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px;
   padding: 0 6px; border-radius: 6px; font-size: 11px; font-weight: 850; margin-left: 6px; vertical-align: 1px; }
 .g-s { background: var(--accent); color: #fff; }
@@ -335,7 +337,7 @@ function render() {
     const tc = o.atr_contraction === "" ? 0 : Math.min(100, +o.atr_contraction);
     return `<tr data-code="${o.code}">
       <td class="name-cell"><b>${o.name}</b><span>${o.code} · ${o.market}</span></td>
-      <td><span class="sig ${sigClass(o.signal)}">${o.signal}</span></td>
+      <td><span class="sig ${sigClass(o.signal)}">${o.signal}</span>${o.vcp_ready ? `<span class="ready-badge">READY</span>` : ""}</td>
       <td><span class="score-n">${o.scan_score === "" ? "-" : o.scan_score}</span>${o.scan_score !== "" ? `<span class="grade g-${grade(o.scan_score)}">${grade(o.scan_score).toUpperCase()}</span>` : ""}</td>
       <td>${o.vcp_stage}</td><td>${o.vcp_quality}</td><td>${o.sepa_score}</td>
       <td>${o.pivot_dist === "" ? "-" : fmt(o.pivot_dist)}</td>
