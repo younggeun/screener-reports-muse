@@ -82,6 +82,14 @@ tbody tr:last-child td { border-bottom: none; }
 .sig-데이터부족 { background: var(--surface-2); color: var(--dim); }
 .ready-badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 10px; font-weight: 800;
   background: var(--accent); color: #fff; margin-left: 4px; vertical-align: 1px; }
+.guide-btn { border: 1px solid var(--border); background: var(--surface); color: var(--dim);
+  border-radius: 50%; width: 30px; height: 30px; font-size: 15px; cursor: pointer; vertical-align: 2px; }
+.guide-btn:hover { color: var(--accent); border-color: var(--accent); }
+.g-sec { font-size: 13px; font-weight: 800; color: var(--accent); margin: 18px 0 8px; letter-spacing: .02em; }
+.g-def { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+.g-def b { display: block; font-size: 13px; margin-bottom: 4px; }
+.g-def p { margin: 0; font-size: 12.5px; line-height: 1.6; color: var(--text); }
+.g-note { font-size: 12px; color: var(--dim); line-height: 1.6; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
 .grade { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px;
   padding: 0 6px; border-radius: 6px; font-size: 11px; font-weight: 850; margin-left: 6px; vertical-align: 1px; }
 .g-s { background: var(--accent); color: #fff; }
@@ -150,7 +158,7 @@ tbody tr[data-code] { cursor: pointer; }
 <div class="wrap">
   <p class="eyebrow">NIGHTLY MARKET SCAN</p>
   <div class="head-row">
-    <h1>데일리 스캔 리포트</h1>
+    <h1>데일리 스캔 리포트 <button class="guide-btn" onclick="openGuide()" aria-label="가이드 열기">ⓘ</button></h1>
     <div class="date-pill">📅 <input type="date" id="f-date"><span id="date-note" style="font-size:11px;color:var(--dim);font-weight:400"></span></div>
   </div>
   <div class="tabs">
@@ -473,6 +481,42 @@ function openDetail(code, src) {
   document.body.style.overflow = "hidden";
 }
 function closeDetail() { $("modal-ov").classList.remove("open"); document.body.style.overflow = ""; }
+function openGuide() {
+  const h = `<div class="modal-head"><div><h2>가이드</h2>
+    <div class="meta">이 숫자들이 무슨 뜻인지</div></div>
+    <button class="modal-x" onclick="closeDetail()">닫기</button></div>
+  <p class="g-sec">신호</p>
+  <div class="g-def"><b>🔴 돌파완료</b><p>종가가 피벗을 0.5% 넘겨 돌파 확정 + SEPA 4점 이상. 거래대금 게이트(50일 평균의 1.5배)까지 통과한 것만 분류돼요.</p></div>
+  <div class="g-def"><b>🟡 돌파임박</b><p>VCP Stage 3 + SEPA 4점 이상 + 종가가 피벗 아래 −7%~0%. "곧 뚫을 것 같은 자리"라는 뜻이에요.</p></div>
+  <div class="g-def"><b>수축중</b><p>VCP Stage 2 + SEPA 3점 이상. 수축이 진행 중이라는 뜻이에요.</p></div>
+  <div class="g-def"><b>관망</b><p>위 조건 어디에도 해당하지 않을 때. 추세는 좋아도 수축이 부족하거나, 추세 자체가 약한 상태일 수 있어요.</p></div>
+  <div class="g-def"><b>READY 뱃지</b><p>신호가 아니라 별개 조건이에요. Stage 3 + 마지막 수축 10% 이하 + 피벗 −7%~+1% + SEPA 4점 이상 + 거래량 말라붙음(50일 평균 80% 이하) 또는 ATR 30% 이상 압축. 돌파임박 옆에 붙어 있으면 "자리도 왔고 구조도 완성" — 가장 먼저 볼 종목이에요.</p></div>
+  <p class="g-sec">점수 · 등급</p>
+  <div class="g-def"><b>종합 점수 (100점)</b><p>추세 30 + 상대강도 25 + 수급 25 + 패턴 20 + 펀더멘털 20 = 120점을 100점으로 환산. 65점이 후보군 출발선이에요.</p></div>
+  <div class="g-def"><b>등급</b><p>S 90+ · A 80+ · B 65+ · C 50+ · D 그 외.</p></div>
+  <div class="g-def"><b>VCP Stage</b><p>0~3. Stage 3은 3개 이상 수축 + 전체 압축 구조 완성. Stage는 가격 수축 구조, ATR 게이지는 변동성 압축 — 별개예요.</p></div>
+  <div class="g-def"><b>VCP Quality</b><p>수축 구조의 질 점수. 높을수록 타이트한 베이스예요.</p></div>
+  <p class="g-sec">피벗 · 손절</p>
+  <div class="g-def"><b>피벗</b><p>마지막 수축 구간의 스윙 고점. 돌파 기준선이에요.</p></div>
+  <div class="g-def"><b>피벗거리</b><p>(종가 − 피벗) ÷ 피벗. −면 피벗 아래, +면 위에 있다는 뜻.</p></div>
+  <div class="g-def"><b>손절 참고</b><p>피벗 × 0.92. 미너비니식 −8% 규칙을 일괄 적용한 참고값이에요.</p></div>
+  <p class="g-sec">거래량</p>
+  <div class="g-def"><b>ATR 수축 게이지</b><p>높을수록 변동성이 크게 줄었다는 뜻. 50%면 변동성이 절반으로 줄었다는 거예요. 낮다고 좋은 게 아니에요.</p></div>
+  <div class="g-def"><b>돌파 거래량 등급</b><p>200%+ VERY STRONG · 150%+ STRONG · 120%+ NORMAL · 100%+ WEAK · 미만 VERY WEAK.</p></div>
+  <p class="g-sec">보조 지표</p>
+  <div class="g-def"><b>EP</b><p>거래량 폭발 + 큰 양봉이 나온 날. 차트에 자동 표시돼요.</p></div>
+  <div class="g-def"><b>터틀</b><p>돈치안 채널 돌파 (S1 20일 / S2 55일). SEPA/VCP와 결이 다른 독립 추세추종 트랙이에요.</p></div>
+  <div class="g-def"><b>S/R 플립</b><p>깨졌던 지지를 되찾은 자리. 정당한 돌파로 봐요.</p></div>
+  <p class="g-sec">탭</p>
+  <div class="g-def"><b>일간 / 주간 / 월간</b><p>일간은 날짜별 전체 스캔. 주간·월간은 신규 돌파완료, 3일+ 돌파임박 지속, 기간 수익률 TOP 집계예요.</p></div>
+  <div class="g-def"><b>승률</b><p>신호가 실제로 먹히는지 검증하는 탭. 돌파임박→돌파 전환율, 돌파 후 +5/+10/+20일 수익률·승률. 표본 30 미만은 "표본 부족"으로 표시돼요.</p></div>
+  <div class="g-def"><b>비교</b><p>전날 스캔 대비 달라진 점. 신호 변경, 신규/이탈, 점수 급변, 피벗 변경을 "먼저 볼 순서"로 정렬해요.</p></div>
+  <p class="g-note">점수·순위·승률은 차트 검토 순서를 정하는 가설이에요. 최종 판단은 항상 직접 차트를 보고 하세요. 가이드는 판단 기준의 설명이고, 매수·매도 결정을 대신하지 않습니다.</p>`;
+  $("modal").innerHTML = h;
+  $("modal-ov").classList.add("open");
+  document.body.style.overflow = "hidden";
+  $("modal").scrollTop = 0;
+}
 $("modal-ov").addEventListener("click", e => { if (e.target.id === "modal-ov") closeDetail(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeDetail(); });
 $("body").addEventListener("click", e => {
