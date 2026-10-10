@@ -84,6 +84,12 @@ tbody tr:last-child td { border-bottom: none; }
   background: var(--accent); color: #fff; margin-left: 4px; vertical-align: 1px; }
 .guide-btn { border: 1px solid var(--border); background: var(--surface); color: var(--dim);
   border-radius: 50%; width: 30px; height: 30px; font-size: 15px; cursor: pointer; vertical-align: 2px; }
+.made-badge { display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: .05em;
+  color: #b85c38; background: #fdeee2; border: 1px solid #efc39f;
+  padding: 4px 12px; border-radius: 999px; vertical-align: 9px; margin: 0 2px; }
+@media (prefers-color-scheme: dark) {
+  .made-badge { color: #f2a97e; background: #2b1a10; border-color: #5c3a22; }
+}
 .guide-btn:hover { color: var(--accent); border-color: var(--accent); }
 .g-sec { font-size: 13px; font-weight: 800; color: var(--accent); margin: 18px 0 8px; letter-spacing: .02em; }
 .g-def { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
@@ -184,7 +190,7 @@ tbody tr[data-code] { cursor: pointer; }
 <div class="wrap">
   <p class="eyebrow">NIGHTLY MARKET SCAN</p>
   <div class="head-row">
-    <h1>데일리 스캔 리포트 <button class="guide-btn" onclick="openGuide()" aria-label="가이드 열기">ⓘ</button></h1>
+    <h1>데일리 스캔 리포트 <span class="made-badge">Muse</span> <button class="guide-btn" onclick="openGuide()" aria-label="가이드 열기">ⓘ</button></h1>
     <div class="date-pill">📅 <input type="date" id="f-date"><span id="date-note" style="font-size:11px;color:var(--dim);font-weight:400"></span></div>
   </div>
   <div class="tabs">
