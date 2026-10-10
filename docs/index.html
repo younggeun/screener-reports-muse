@@ -112,6 +112,32 @@ tbody tr:last-child td { border-bottom: none; }
 .insufficient { opacity: .55; }
 .insuf-tag { display: inline-block; font-size: 11px; font-weight: 800; color: var(--dim);
   background: var(--surface-2); border-radius: 999px; padding: 2px 10px; margin-left: 8px; vertical-align: 2px; }
+/* fresh-breakout grade chart */
+.wr-controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 10px 0 2px; }
+.seg { display: inline-flex; background: var(--surface-2); border-radius: 999px; padding: 3px; gap: 2px; }
+.seg button { border: none; background: transparent; color: var(--dim); font-size: 12px; font-weight: 800;
+  padding: 6px 14px; border-radius: 999px; cursor: pointer; font-family: inherit; }
+.seg button.on { background: var(--surface); color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+.wr-nav { display: inline-flex; align-items: center; gap: 2px; }
+.wr-nav button { border: 1px solid var(--border); background: var(--surface); color: var(--dim);
+  border-radius: 8px; width: 26px; height: 26px; font-size: 13px; cursor: pointer; line-height: 1; }
+.wr-nav button:disabled { opacity: .35; cursor: default; }
+.wr-nav span { font-size: 12px; font-weight: 800; min-width: 86px; text-align: center; }
+.wr-chart { width: 100%; margin-top: 6px; }
+.wr-chart svg { width: 100%; height: auto; display: block; }
+.gbar { cursor: pointer; }
+.gbar.sel rect.bar { stroke: var(--text); stroke-width: 2.5; }
+.cx { fill: var(--dim); } .cxb { fill: var(--text); }
+.wr-gstat { display: grid; grid-template-columns: repeat(auto-fit, minmax(108px, 1fr)); gap: 8px; margin-top: 10px; }
+.wr-gstat .gs { background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 8px 10px; cursor: pointer; }
+.wr-gstat .gs.sel { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.wr-gstat .gs .gr { font-weight: 800; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+.wr-gstat .gs .gr i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.wr-gstat .gs .gv { font-size: 11.5px; color: var(--dim); margin-top: 3px; line-height: 1.55; }
+.wr-gstat .gs .gv b { color: var(--text); }
+.wr-drill-title { font-size: 14px; font-weight: 800; margin: 14px 0 6px; display: flex; align-items: center; gap: 8px; }
+.stop-hit { color: var(--risk); font-weight: 800; }
 #loading { text-align: center; padding: 48px; color: var(--dim); }
 tbody tr[data-code] { cursor: pointer; }
 .modal-ov { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: none;
@@ -265,6 +291,19 @@ tbody tr[data-code] { cursor: pointer; }
   <div id="view-winrate" style="display:none">
     <div class="period-line" id="wr-period"></div>
     <p class="sec-sub" style="margin:4px 2px 0">신호의 실제 적중률을 검증합니다 — 스캔 데이터가 쌓일수록 정확해져요. 표본 30개 미만 지표는 회색으로 표시돼요.</p>
+    <div class="card" id="wr-card-fresh">
+      <p class="sec-title">📊 Fresh Breakout 등급별 성과 <span id="wr-fresh-tag"></span></p>
+      <p class="sec-sub">신규 돌파완료 신호의 등급별 실제 성과 — 완료된 표본만 집계하고, 대기 표본은 손실로 치지 않아요. 막대나 등급을 누르면 종목별 내역이 나와요.</p>
+      <div class="wr-controls">
+        <div class="seg" id="wr-seg-cohort"></div>
+        <div class="wr-nav"><button id="wr-prev" aria-label="이전 기간">‹</button><span id="wr-cohort-label"></span><button id="wr-next" aria-label="다음 기간">›</button></div>
+        <div class="seg" id="wr-seg-window"></div>
+        <div class="seg" id="wr-seg-ver"></div>
+      </div>
+      <div class="wr-chart" id="wr-chart"></div>
+      <div class="wr-gstat" id="wr-gstat"></div>
+      <div id="wr-drill" style="display:none"></div>
+    </div>
     <div class="card" id="wr-card-near">
       <p class="sec-title">🎯 돌파임박 → 돌파완료 전환율 <span id="wr-near-tag"></span></p>
       <p class="sec-sub">돌파임박 신호 후 10거래일 내 돌파완료로 전환된 비율</p>
@@ -277,13 +316,7 @@ tbody tr[data-code] { cursor: pointer; }
         <th>기간</th><th>표본</th><th>평균</th><th>중앙값</th><th>승률</th><th>손절 도달률</th>
       </tr></thead><tbody id="wr-ft"></tbody></table></div>
     </div>
-    <div class="card" id="wr-card-grade">
-      <p class="sec-title">🏅 등급별 +10일 승률 <span id="wr-grade-tag"></span></p>
-      <p class="sec-sub">돌파완료 신호의 총점 등급별 10거래일 후 수익 발생 비율</p>
-      <div style="overflow-x:auto"><table><thead><tr>
-        <th>등급</th><th>표본</th><th>승률</th><th>평균 수익률</th>
-      </tr></thead><tbody id="wr-grade"></tbody></table></div>
-    </div>
+</div>
   </div><!-- /view-winrate -->
 
   <div id="view-diff" style="display:none">
@@ -509,7 +542,7 @@ function openGuide() {
   <div class="g-def"><b>S/R 플립</b><p>깨졌던 지지를 되찾은 자리. 정당한 돌파로 봐요.</p></div>
   <p class="g-sec">탭</p>
   <div class="g-def"><b>일간 / 주간 / 월간</b><p>일간은 날짜별 전체 스캔. 주간·월간은 신규 돌파완료, 3일+ 돌파임박 지속, 기간 수익률 TOP 집계예요.</p></div>
-  <div class="g-def"><b>승률</b><p>신호가 실제로 먹히는지 검증하는 탭. 돌파임박→돌파 전환율, 돌파 후 +5/+10/+20일 수익률·승률. 표본 30 미만은 "표본 부족"으로 표시돼요.</p></div>
+  <div class="g-def"><b>승률</b><p>신호가 실제로 먹히는지 검증하는 탭. 상단 그래프는 신규 돌파완료 신호의 등급별 실제 성과(평균 수익률·승률·완료/대기 표본)예요. 주간/월간, 5·10·20일, 전략 버전으로 바꿔 볼 수 있고, 등급을 누르면 종목별 내역, 종목을 누르면 그 날짜 분석으로 이동해요. 대기 표본은 손실로 치지 않아요. 아래에는 돌파임박→돌파 전환율, 돌파 후 +5/+10/+20일 수익률·승률이 있어요. 표본 30 미만은 "표본 부족"으로 표시돼요.</p></div>
   <div class="g-def"><b>비교</b><p>전날 스캔 대비 달라진 점. 신호 변경, 신규/이탈, 점수 급변, 피벗 변경을 "먼저 볼 순서"로 정렬해요.</p></div>
   <p class="g-note">점수·순위·승률은 차트 검토 순서를 정하는 가설이에요. 최종 판단은 항상 직접 차트를 보고 하세요. 가이드는 판단 기준의 설명이고, 매수·매도 결정을 대신하지 않습니다.</p>`;
   $("modal").innerHTML = h;
@@ -621,22 +654,205 @@ async function renderWinrate() {
         <td><b>${v.win_rate_pct == null ? "-" : v.win_rate_pct + "%"}</b></td>
         <td>${v.stop_hit_pct == null ? "-" : v.stop_hit_pct + "%"}</td></tr>`;
     }).join("");
-    // 3) by grade
-    const g = d.by_grade || {};
-    const gKeys = ["S", "A", "B", "C"];
-    const gInsuf = gKeys.every(k => !g[k] || g[k].insufficient);
-    $("wr-grade-tag").innerHTML = insufTag(gInsuf);
-    $("wr-card-grade").classList.toggle("insufficient", !!gInsuf);
-    $("wr-grade").innerHTML = gKeys.map(k => {
-      const v = g[k] || {};
-      return `<tr><td><span class="grade g-${k.toLowerCase()}">${k}</span></td><td>${v.n || 0}</td>
-        <td><b>${v.win_rate_pct == null ? "-" : v.win_rate_pct + "%"}</b></td>
-        <td class="${(v.avg_pct || 0) >= 0 ? "up" : "down"}">${pctCell(v.avg_pct)}</td></tr>`;
-    }).join("");
+    // 3) fresh breakout grade chart (replaces the old static grade table)
+    wrFresh = d.fresh_breakout || null;
+    if (wrFresh && wrFresh.versions.length && !wrSel.ver)
+      wrSel.ver = wrFresh.versions[wrFresh.versions.length - 1];
+    renderFresh();
   } catch (e) {
     $("wr-period").innerHTML = "승률 데이터를 불러오지 못했어요";
   }
 }
+
+/* ---- fresh breakout: grade performance graph + drill-down ---- */
+let wrFresh = null;
+const wrSel = { cohort: "weekly", window: "10", ver: null, ck: null, grade: null };
+const GCOL = { S: "#c99327", A: "#2f9e5f", B: "#2f7de1", C: "#9aa0a6", D: "#6b7078" };
+const INSUFC = "#c9cfd4";
+const GRADES = ["S", "A", "B", "C", "D"];
+
+function wrCohortList() {
+  const fb = wrFresh, ck = wrSel.cohort === "weekly" ? "wk" : "mk", lk = wrSel.cohort === "weekly" ? "wl" : "ml";
+  const m = new Map();
+  for (const s of fb.samples) {
+    if (s.v !== wrSel.ver) continue;
+    if (!m.has(s[ck])) m.set(s[ck], s[lk]);
+  }
+  return [...m.entries()].map(([k, label]) => ({ k, label })).sort((a, b) => a.k < b.k ? -1 : 1);
+}
+
+function wrAgg() {
+  const fb = wrFresh, win = wrSel.window;
+  const ck = wrSel.cohort === "weekly" ? "wk" : "mk";
+  const out = {};
+  for (const g of GRADES) out[g] = { rets: [], stops: 0, pending: 0, rows: [] };
+  for (const s of fb.samples) {
+    if (s.v !== wrSel.ver || s[ck] !== wrSel.ck) continue;
+    const gd = out[s.g];
+    const w = s.w[win];
+    if (!w) { gd.pending++; continue; }
+    if (w.x) continue; // window elapsed but no price data
+    gd.rets.push(w.r);
+    if (w.stop) gd.stops++;
+    gd.rows.push({ d: s.d, c: s.c, n: s.n, r: w.r, stop: w.stop });
+  }
+  for (const g of GRADES) {
+    const gd = out[g], n = gd.rets.length;
+    gd.n = n;
+    gd.avg = n ? gd.rets.reduce((a, b) => a + b, 0) / n : null;
+    gd.win = n ? gd.rets.filter(r => r > 0).length / n * 100 : null;
+    gd.insuf = n < (fb.min_samples || 30);
+    gd.rows.sort((a, b) => b.r - a.r);
+  }
+  return out;
+}
+
+function wrChart(agg) {
+  const W = 560, H = 250, padL = 46, padR = 10, padT = 28, padB = 48;
+  const cw = (W - padL - padR) / GRADES.length;
+  let maxAbs = 2;
+  for (const g of GRADES) if (agg[g].avg != null) maxAbs = Math.max(maxAbs, Math.abs(agg[g].avg));
+  maxAbs = Math.ceil(maxAbs);
+  const midY = padT + (H - padT - padB) / 2, half = (H - padT - padB) / 2;
+  const yOf = v => midY - v / maxAbs * half;
+  let h = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="등급별 평균 수익률">`;
+  for (const gv of [-maxAbs, -maxAbs / 2, 0, maxAbs / 2, maxAbs]) {
+    const y = yOf(gv).toFixed(1);
+    h += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" style="stroke:var(--border)" stroke-width="${gv === 0 ? 1.5 : 0.75}"/>`;
+    h += `<text x="${padL - 6}" y="${+y + 4}" text-anchor="end" font-size="10" class="cx">${gv > 0 ? "+" : ""}${gv}%</text>`;
+  }
+  GRADES.forEach((g, i) => {
+    const gd = agg[g], cx = padL + cw * i + cw / 2, bw = Math.min(54, cw * 0.55);
+    const col = gd.insuf ? INSUFC : GCOL[g];
+    if (gd.avg != null) {
+      const y = yOf(gd.avg), top = Math.min(y, midY), ht = Math.max(3, Math.abs(y - midY));
+      h += `<g class="gbar${wrSel.grade === g ? " sel" : ""}" data-g="${g}">`
+        + `<rect class="bar" x="${(cx - bw / 2).toFixed(1)}" y="${top.toFixed(1)}" width="${bw}" height="${ht.toFixed(1)}" rx="4" fill="${col}"/>`
+        + `<text x="${cx.toFixed(1)}" y="${(gd.avg >= 0 ? top - 8 : top + ht + 16).toFixed(1)}" text-anchor="middle" font-size="11.5" font-weight="800" class="cxb">${gd.avg >= 0 ? "+" : ""}${gd.avg.toFixed(1)}%</text></g>`;
+    } else {
+      h += `<text x="${cx.toFixed(1)}" y="${(midY - 10).toFixed(1)}" text-anchor="middle" font-size="11" class="cx">데이터 없음</text>`;
+    }
+    h += `<text x="${cx.toFixed(1)}" y="${H - 30}" text-anchor="middle" font-size="12.5" font-weight="800" class="cxb">${g}</text>`;
+    h += `<text x="${cx.toFixed(1)}" y="${H - 14}" text-anchor="middle" font-size="10" class="cx">완료 ${gd.n}${gd.pending ? ` · 대기 ${gd.pending}` : ""}</text>`;
+  });
+  return h + `</svg>`;
+}
+
+function wrGstat(agg) {
+  return GRADES.map(g => {
+    const gd = agg[g];
+    return `<div class="gs${wrSel.grade === g ? " sel" : ""}" data-g="${g}">`
+      + `<div class="gr"><i style="background:${gd.insuf ? INSUFC : GCOL[g]}"></i>${g}등급${gd.insuf ? ' <span class="insuf-tag" style="margin:0">표본 부족</span>' : ""}</div>`
+      + `<div class="gv">평균 <b class="${(gd.avg || 0) >= 0 ? "up" : "down"}">${gd.avg == null ? "-" : (gd.avg >= 0 ? "+" : "") + gd.avg.toFixed(1) + "%"}</b><br>`
+      + `승률 <b>${gd.win == null ? "-" : gd.win.toFixed(0) + "%"}</b> · 손절 ${gd.stops}건<br>완료 <b>${gd.n}</b>건 · 대기 ${gd.pending}건</div></div>`;
+  }).join("");
+}
+
+function wrDrill(agg) {
+  const g = wrSel.grade;
+  if (!g || !agg[g]) return;
+  const gd = agg[g];
+  const rows = gd.rows.map(s =>
+    `<tr data-code="${s.c}" data-d8="${s.d}">${nameCell({ name: s.n, code: s.c, market: "" })}`
+    + `<td>${d8label(s.d)}</td>`
+    + `<td class="${s.r >= 0 ? "up" : "down"}"><b>${s.r >= 0 ? "+" : ""}${s.r.toFixed(1)}%</b></td>`
+    + `<td>${s.stop ? '<span class="stop-hit">도달</span>' : "-"}</td></tr>`).join("");
+  $("wr-drill").innerHTML =
+    `<div class="wr-drill-title"><i style="width:10px;height:10px;border-radius:3px;background:${GCOL[g]};display:inline-block"></i>`
+    + `${g}등급 종목 내역 <span style="color:var(--dim);font-weight:400;font-size:12px">+${wrSel.window}일 · ${gd.n}건 · 종목을 누르면 해당 날짜 분석으로 이동</span></div>`
+    + `<div style="overflow-x:auto"><table><thead><tr><th>종목</th><th>신호일</th><th>수익률</th><th>손절 도달</th></tr></thead>`
+    + `<tbody>${rows || `<tr><td colspan="4"><div class="empty-note">완료된 표본이 없어요</div></td></tr>`}</tbody></table></div>`;
+  $("wr-drill").style.display = "";
+}
+
+function wrNavCohort(d) {
+  const cl = wrCohortList();
+  const ci = cl.findIndex(c => c.k === wrSel.ck);
+  const ni = Math.min(cl.length - 1, Math.max(0, ci + d));
+  if (cl[ni]) { wrSel.ck = cl[ni].k; wrSel.grade = null; renderFresh(); }
+}
+
+function renderFresh() {
+  const fb = wrFresh;
+  if (!fb || !fb.samples.length) {
+    $("wr-fresh-tag").innerHTML = "";
+    $("wr-chart").innerHTML = `<div class="empty-note">아직 검증 데이터가 없어요. 스캔이 쌓이면 표시됩니다.</div>`;
+    $("wr-gstat").innerHTML = "";
+    $("wr-cohort-label").textContent = "";
+    $("wr-drill").style.display = "none";
+    return;
+  }
+  $("wr-seg-cohort").innerHTML = ["weekly", "monthly"].map(v =>
+    `<button data-v="${v}" class="${wrSel.cohort === v ? "on" : ""}">${v === "weekly" ? "주간" : "월간"}</button>`).join("");
+  $("wr-seg-window").innerHTML = fb.windows.map(w =>
+    `<button data-v="${w}" class="${wrSel.window === String(w) ? "on" : ""}">${w}일</button>`).join("");
+  $("wr-seg-ver").innerHTML = fb.versions.map(v =>
+    `<button data-v="${v}" class="${wrSel.ver === v ? "on" : ""}">${v}</button>`).join("");
+  const cl = wrCohortList();
+  if (!cl.length) {
+    $("wr-cohort-label").textContent = "";
+    $("wr-prev").disabled = $("wr-next").disabled = true;
+    $("wr-chart").innerHTML = `<div class="empty-note">해당 버전의 신호 데이터가 없어요.</div>`;
+    $("wr-gstat").innerHTML = "";
+    $("wr-drill").style.display = "none";
+    return;
+  }
+  if (!cl.some(c => c.k === wrSel.ck)) wrSel.ck = cl[cl.length - 1].k;
+  const ci = cl.findIndex(c => c.k === wrSel.ck);
+  $("wr-cohort-label").textContent = cl[ci].label;
+  $("wr-prev").disabled = ci <= 0;
+  $("wr-next").disabled = ci >= cl.length - 1;
+  const agg = wrAgg();
+  const allInsuf = GRADES.every(g => agg[g].insuf);
+  $("wr-fresh-tag").innerHTML = insufTag(allInsuf);
+  $("wr-card-fresh").classList.toggle("insufficient", !!allInsuf);
+  $("wr-chart").innerHTML = wrChart(agg);
+  $("wr-gstat").innerHTML = wrGstat(agg);
+  if (wrSel.grade && agg[wrSel.grade]) wrDrill(agg);
+  else { $("wr-drill").style.display = "none"; $("wr-drill").innerHTML = ""; }
+}
+
+async function wrGotoDetail(d8, code) {
+  if (!DATES.length) return;
+  document.querySelector('.tab[data-view="daily"]').click();
+  const target = [...DATES].reverse().find(d => d <= d8) || DATES[DATES.length - 1];
+  $("f-date").value = toISO(target);
+  $("date-note").textContent = target !== d8 ? `해당일 스캔 없음 → ${toISO(target)} 표시` : "";
+  curSignal = ""; $("f-signal").value = "";
+  await load(target);
+  openDetail(code);
+}
+
+$("wr-seg-cohort").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  wrSel.cohort = b.dataset.v; wrSel.ck = null; wrSel.grade = null; renderFresh();
+});
+$("wr-seg-window").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  wrSel.window = b.dataset.v; wrSel.grade = null; renderFresh();
+});
+$("wr-seg-ver").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  wrSel.ver = b.dataset.v; wrSel.ck = null; wrSel.grade = null; renderFresh();
+});
+$("wr-prev").addEventListener("click", () => wrNavCohort(-1));
+$("wr-next").addEventListener("click", () => wrNavCohort(1));
+$("wr-chart").addEventListener("click", e => {
+  const b = e.target.closest(".gbar"); if (!b) return;
+  wrSel.grade = wrSel.grade === b.dataset.g ? null : b.dataset.g;
+  renderFresh();
+});
+$("wr-gstat").addEventListener("click", e => {
+  const b = e.target.closest(".gs"); if (!b) return;
+  wrSel.grade = wrSel.grade === b.dataset.g ? null : b.dataset.g;
+  renderFresh();
+});
+$("wr-drill").addEventListener("click", e => {
+  const tr = e.target.closest("tr[data-code]");
+  if (!tr || !tr.dataset.d8) return;
+  e.stopPropagation();
+  wrGotoDetail(tr.dataset.d8, tr.dataset.code);
+});
 
 /* ---- diff (compare) view: day-over-day changes ---- */
 let diffData = null, diffAll = [], diffCat = "", diffQ = "";
