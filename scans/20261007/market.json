@@ -1,0 +1,8 @@
+{
+  "kospi": "혼조",
+  "kosdaq": "상승장",
+  "kospi_dist": 7,
+  "kosdaq_dist": 6,
+  "updated_at_kst": "2026-10-07T23:59+09:00",
+  "basis": "backfilled from Naver index daily data (same logic as app)"
+}

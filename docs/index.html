@@ -172,6 +172,16 @@ tbody tr[data-code] { cursor: pointer; }
 .foot { margin-top: 20px; font-size: 11px; color: var(--dim); line-height: 1.6; }
 .diff-banner { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 12px;
   padding: 12px 16px; margin: 12px 0; font-weight: 800; font-size: 14px; cursor: pointer; }
+.market-banner { display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 10px 16px; margin: 12px 0; font-size: 13px; }
+.market-regime { font-weight: 800; border-radius: 6px; padding: 3px 10px; }
+.mr-up { background: var(--accent-soft); color: var(--accent); }
+.mr-down { background: var(--risk-soft); color: var(--risk); }
+.mr-mix { background: var(--warning-soft); color: var(--warning); }
+.market-dist { color: var(--dim); font-size: 12px; }
+.market-basis { margin-left: auto; color: var(--dim); font-size: 11px; }
+.market-sep { color: var(--border); }
 .diff-chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 4px; }
 .diff-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
   padding: 14px; margin-top: 10px; cursor: pointer; display: flex;
@@ -200,6 +210,7 @@ tbody tr[data-code] { cursor: pointer; }
     <button class="tab" data-view="winrate">승률</button>
     <button class="tab" data-view="diff">비교</button>
   </div>
+  <div class="market-banner" id="market-banner" style="display:none"></div>
   <div id="view-daily">
   <div class="dist" id="dist"></div>
 
@@ -390,6 +401,30 @@ async function load(date) {
   }));
   $("loading").style.display = "none"; $("tbl").style.display = "";
   render();
+  loadMarket(date);
+}
+
+function regimeChip(r) {
+  if (!r) return "";
+  const cls = r === "상승장" ? "mr-up" : r === "하락장" ? "mr-down" : "mr-mix";
+  return `<span class="market-regime ${cls}">${r}</span>`;
+}
+async function loadMarket(date) {
+  const bn = $("market-banner");
+  try {
+    const res = await fetch(`${BASE}/scans/${date}/market.json`);
+    if (!res.ok) throw new Error("no market data");
+    const m = await res.json();
+    if (!m || (!m.kospi && !m.kosdaq)) throw new Error("empty");
+    const basis = m.updated_at_kst ? m.updated_at_kst.slice(5, 10).replace("-", "/") : "";
+    bn.innerHTML =
+      `<b>시장</b> KOSPI ${regimeChip(m.kospi)}` +
+      (m.kospi_dist != null ? `<span class="market-dist">분포 ${m.kospi_dist}일</span>` : "") +
+      `<span class="market-sep">|</span> KOSDAQ ${regimeChip(m.kosdaq)}` +
+      (m.kosdaq_dist != null ? `<span class="market-dist">분포 ${m.kosdaq_dist}일</span>` : "") +
+      (basis ? `<span class="market-basis">기준 ${basis}</span>` : "");
+    bn.style.display = "";
+  } catch (e) { bn.style.display = "none"; }
 }
 
 function render() {
@@ -546,6 +581,9 @@ function openGuide() {
   <div class="g-def"><b>EP</b><p>거래량 폭발 + 큰 양봉이 나온 날. 차트에 자동 표시돼요.</p></div>
   <div class="g-def"><b>터틀</b><p>돈치안 채널 돌파 (S1 20일 / S2 55일). SEPA/VCP와 결이 다른 독립 추세추종 트랙이에요.</p></div>
   <div class="g-def"><b>S/R 플립</b><p>깨졌던 지지를 되찾은 자리. 정당한 돌파로 봐요.</p></div>
+  <p class="g-sec">시장 상태</p>
+  <div class="g-def"><b>시장 상태 (상승장 / 하락장 / 혼조)</b><p>지수 종가와 50일선의 위치 + 50일선 방향(20일 전 대비)으로 판정해요. 종가가 50일선 위에 있고 50일선이 상승 중이면 상승장, 종가가 50일선 아래에 있고 50일선이 하락 중이면 하락장, 그 외는 혼조예요. "지금이 추격할 장인지, 웅크릴 장인지"를 보는 큰 그림이에요. 페이지 상단 배너에 표시돼요.</p></div>
+  <div class="g-def"><b>분포일</b><p>최근 25거래일 중 "전일보다 0.2% 이상 하락 + 거래량 증가"인 날의 수예요. 기관이 물량을 던지는 날이 쌓이는지 보는 오닐식 지표예요. 0–2일은 정상, 3–4일은 주의(포지션 축소 고려), 5일 이상은 신규 진입 자제 국면이에요.</p></div>
   <p class="g-sec">탭</p>
   <div class="g-def"><b>일간 / 주간 / 월간</b><p>일간은 날짜별 전체 스캔. 주간·월간은 신규 돌파완료, 3일+ 돌파임박 지속, 기간 수익률 TOP 집계예요.</p></div>
   <div class="g-def"><b>승률</b><p>신호가 실제로 먹히는지 검증하는 탭. 상단 그래프는 신규 돌파완료 신호의 등급별 실제 성과(평균 수익률·승률·완료/대기 표본)예요. 주간/월간, 5·10·20일, 전략 버전으로 바꿔 볼 수 있고, 등급을 누르면 종목별 내역, 종목을 누르면 그 날짜 분석으로 이동해요. 대기 표본은 손실로 치지 않아요. 아래에는 돌파임박→돌파 전환율, 돌파 후 +5/+10/+20일 수익률·승률이 있어요. 표본 30 미만은 "표본 부족"으로 표시돼요.</p></div>
