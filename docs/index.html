@@ -61,6 +61,10 @@ h1 { margin: 0; font-size: clamp(26px, 6vw, 40px); letter-spacing: -.03em; font-
 .f select, .f input { background: var(--bg); color: var(--text); border: 1px solid var(--border);
   border-radius: 8px; padding: 7px 10px; font-size: 13px; font-family: inherit; }
 .f input:focus, .f select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.search-row { display: flex; gap: 6px; align-items: center; }
+.sbtn { background: var(--surface); color: var(--text); border: 1px solid var(--border);
+  border-radius: 8px; padding: 7px 14px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.sbtn:active { background: var(--accent-soft); border-color: var(--accent); }
 .count-line { margin: 14px 2px 8px; font-size: 13px; color: var(--dim); }
 .count-line b { color: var(--text); }
 table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--surface);
@@ -229,7 +233,7 @@ tbody tr[data-code] { cursor: pointer; }
       <div class="f"><span>VCP Stage</span>
         <select id="f-stage"><option value="">전체</option><option>3</option><option>2</option><option>1</option><option>0</option></select>
       </div>
-      <div class="f"><span>종목 검색</span><input id="f-search" type="text" placeholder="이름 또는 코드" style="width:150px"></div>
+      <div class="f"><span>종목 검색</span><span class="search-row"><input id="f-search" type="text" placeholder="이름 또는 코드" style="width:130px" enterkeyhint="search"><button id="f-search-btn" class="sbtn">검색</button></span></div>
       <div class="f"><span>정렬</span>
         <select id="f-sort">
           <option value="scan_score">총점 높은 순</option><option value="turnover_eok">거래대금 순</option>
@@ -466,7 +470,8 @@ function render() {
 ["f-signal","f-score","f-turnover","f-stage","f-sort"].forEach(id =>
   $(id).addEventListener("change", () => { if (id === "f-signal") { curSignal = $("f-signal").value;
     document.querySelectorAll(".dist-chip").forEach(x => x.classList.toggle("active", x.dataset.s === curSignal)); } render(); }));
-$("f-search").addEventListener("input", render);
+$("f-search-btn").addEventListener("click", render);
+$("f-search").addEventListener("keydown", e => { if (e.key === "Enter") render(); });
 let DATES = [];
 function toD8(iso) { return iso.replace(/-/g, ""); }
 function toISO(d8) { return `${d8.slice(0,4)}-${d8.slice(4,6)}-${d8.slice(6,8)}`; }
