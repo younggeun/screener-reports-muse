@@ -199,6 +199,20 @@ tbody tr[data-code] { cursor: pointer; }
 .diff-score { font-size: 22px; font-weight: 800; text-align: right; white-space: nowrap; }
 .diff-delta { font-size: 13px; font-weight: 700; text-align: right; margin-top: 2px; white-space: nowrap; }
 @media (max-width: 720px) { th:nth-child(n+9), td:nth-child(n+9) { display: none; } }
+.fwdtest-log { max-height: 70vh; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; background: var(--surface); font-size: 13px; line-height: 1.65; }
+.fwdtest-log h1 { font-size: 17px; margin: 2px 0 10px; }
+.fwdtest-log h2 { font-size: 15px; margin: 16px 0 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+.fwdtest-log h3 { font-size: 14px; margin: 12px 0 6px; }
+.fwdtest-log p { margin: 6px 0; }
+.fwdtest-log ul { margin: 6px 0; padding-left: 20px; }
+.fwdtest-log li { margin: 3px 0; }
+.fwdtest-log table { font-size: 12px; margin: 8px 0; }
+.fwdtest-log th, .fwdtest-log td { padding: 5px 8px; white-space: nowrap; }
+@media (max-width: 720px) { .fwdtest-log th:nth-child(n+6), .fwdtest-log td:nth-child(n+6) { display: none; } }
+#fwdtest-winrate h2 { font-size: 15px; margin: 14px 0 6px; }
+#fwdtest-winrate ul { margin: 6px 0 10px; padding-left: 20px; font-size: 13px; line-height: 1.7; }
+#fwdtest-winrate li { margin: 2px 0; }
+#fwdtest-winrate li ul { margin: 2px 0 4px; }
 </style>
 </head>
 <body>
@@ -214,6 +228,7 @@ tbody tr[data-code] { cursor: pointer; }
     <button class="tab" data-view="monthly">월간</button>
     <button class="tab" data-view="winrate">승률</button>
     <button class="tab" data-view="diff">비교</button>
+    <button class="tab" data-view="fwdtest">포워드 테스트</button>
   </div>
   <div class="market-banner" id="market-banner" style="display:none"></div>
   <div id="view-daily">
@@ -353,6 +368,19 @@ tbody tr[data-code] { cursor: pointer; }
     <div class="count-line" id="diff-count"></div>
     <div id="diff-list"></div>
   </div><!-- /view-diff -->
+
+  <div id="view-fwdtest" style="display:none">
+    <div class="period-line" id="fwdtest-period"></div>
+    <p class="sec-sub" style="margin:4px 2px 0">실제 순방향 기록 기반 포워드 테스트예요. 스캔 데이터를 재구성한 승률 탭과는 별개로 봐주세요.</p>
+    <div class="card">
+      <p class="sec-title">📊 주간 승률 집계</p>
+      <div id="fwdtest-winrate"></div>
+    </div>
+    <div class="card">
+      <p class="sec-title">📝 누적 Raw 로그</p>
+      <div id="fwdtest-log" class="fwdtest-log"></div>
+    </div>
+  </div><!-- /view-fwdtest -->
 
   <div class="foot">매일 밤 전 종목 스캔 후 자동 업데이트 · 일봉 캔들 원본은 제외 (용량) · <a href="https://github.com/younggeun/screener-reports-muse" style="color:var(--accent)">GitHub 저장소</a></div>
 </div>
@@ -662,11 +690,80 @@ document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () =>
   $("view-monthly").style.display = v === "monthly" ? "" : "none";
   $("view-winrate").style.display = v === "winrate" ? "" : "none";
   $("view-diff").style.display = v === "diff" ? "" : "none";
+  $("view-fwdtest").style.display = v === "fwdtest" ? "" : "none";
   if (v === "weekly") renderAgg("weekly");
   if (v === "monthly") renderAgg("monthly");
   if (v === "winrate") renderWinrate();
   if (v === "diff") renderDiff();
+  if (v === "fwdtest") renderFwdTest();
 }));
+
+/* ---- forward test: weekly aggregate + raw log (separate from scan-based winrate) ---- */
+function mdEsc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+function mdInline(s) { return mdEsc(s).replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>"); }
+function mdToHtml(md) {
+  const lines = md.split("\n");
+  let html = "", inTable = false, inList = false, listDepth = 0;
+  const closeTable = () => { if (inTable) { html += "</tbody></table></div>"; inTable = false; } };
+  const closeList = () => { while (inList && listDepth > 0) { html += "</ul>"; listDepth--; } inList = false; };
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i], t = line.trim();
+    if (!t) { closeTable(); closeList(); continue; }
+    if (/^\|.*\|$/.test(t)) {
+      closeList();
+      const cells = t.slice(1, -1).split("|").map(c => c.trim());
+      if (/^[\s|:|-]+$/.test(t)) continue; // separator row
+      if (!inTable) { html += '<div style="overflow-x:auto"><table><thead><tr>'; inTable = "head"; }
+      if (inTable === "head") {
+        html += cells.map(c => `<th>${mdInline(c)}</th>`).join("") + "</tr></thead><tbody>";
+        inTable = "body";
+      } else {
+        html += "<tr>" + cells.map(c => `<td>${mdInline(c)}</td>`).join("") + "</tr>";
+      }
+      continue;
+    }
+    closeTable();
+    const hm = t.match(/^(#{1,3})\s+(.*)/);
+    if (hm) { closeList(); html += `<h${hm[1].length}>${mdInline(hm[2])}</h${hm[1].length}>`; continue; }
+    const lm = line.match(/^(\s*)-\s+(.*)/);
+    if (lm) {
+      const depth = Math.floor(lm[1].length / 2) + 1;
+      while (listDepth < depth) { html += "<ul>"; listDepth++; }
+      while (listDepth > depth) { html += "</ul>"; listDepth--; }
+      inList = true;
+      html += `<li>${mdInline(lm[2])}</li>`;
+      continue;
+    }
+    closeList();
+    if (/^---+$/.test(t)) { html += "<hr>"; continue; }
+    html += `<p>${mdInline(t)}</p>`;
+  }
+  closeTable(); closeList();
+  return html;
+}
+
+let fwdTestCache = null;
+async function renderFwdTest() {
+  $("fwdtest-period").innerHTML = "불러오는 중...";
+  $("fwdtest-winrate").innerHTML = ""; $("fwdtest-log").innerHTML = "";
+  try {
+    if (!fwdTestCache) {
+      const [wr, log] = await Promise.all([
+        fetch(`${BASE}/forward_test/win_rate.md`).then(r => { if (!r.ok) throw 0; return r.text(); }),
+        fetch(`${BASE}/forward_test/log.md`).then(r => { if (!r.ok) throw 0; return r.text(); }),
+      ]);
+      fwdTestCache = { wr, log };
+    }
+    const wrLines = fwdTestCache.wr.split("\n");
+    const wrTitle = (wrLines[0] || "").replace(/^#\s*/, "");
+    const wrBody = wrLines.slice(1).join("\n");
+    $("fwdtest-period").innerHTML = `<b>${mdEsc(wrTitle)}</b> · 매일 07:30 기록, 매주 월요일 집계`;
+    $("fwdtest-winrate").innerHTML = mdToHtml(wrBody);
+    $("fwdtest-log").innerHTML = mdToHtml(fwdTestCache.log);
+  } catch (e) {
+    $("fwdtest-period").innerHTML = "포워드 테스트 데이터를 불러오지 못했어요";
+  }
+}
 
 function insufTag(b) { return b ? `<span class="insuf-tag">표본 부족</span>` : ""; }
 function pctCell(v) { return v == null ? "-" : `${v >= 0 ? "+" : ""}${fmt(v)}%`; }
