@@ -43,8 +43,9 @@ h1 { margin: 0; font-size: clamp(26px, 6vw, 40px); letter-spacing: -.03em; font-
 .dist-chip:hover { border-color: var(--accent); }
 .dist-chip.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
 .dist-chip b { font-size: 14px; }
-.tabs { display: flex; gap: 8px; margin: 18px 0 2px; }
+.tabs { display: flex; gap: 8px; margin: 18px 0 2px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
 .tab { padding: 8px 22px; border-radius: 999px; border: 1px solid var(--border);
+  white-space: nowrap; flex-shrink: 0;
   background: var(--surface); color: var(--dim); font-size: 13px; font-weight: 800;
   cursor: pointer; font-family: inherit; }
 .tab:hover { border-color: var(--accent); }
@@ -213,6 +214,17 @@ tbody tr[data-code] { cursor: pointer; }
 #fwdtest-winrate ul { margin: 6px 0 10px; padding-left: 20px; font-size: 13px; line-height: 1.7; }
 #fwdtest-winrate li { margin: 2px 0; }
 #fwdtest-winrate li ul { margin: 2px 0 4px; }
+.sec-divider { border: 0; border-top: 2px solid var(--border); margin: 22px 4px 6px; }
+.fwdlog-row { cursor: pointer; }
+.fwdlog-detail td { background: var(--bg); font-size: 12px; color: var(--dim); }
+.fwdlog-detail b { color: var(--text); }
+.sig-badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 800; }
+.sig-돌파완료 { background: #fde8e8; color: #c0392b; }
+.sig-돌파임박 { background: #fff3d6; color: #b7791f; }
+@media (prefers-color-scheme: dark) {
+  .sig-돌파완료 { background: #4a2020; color: #ff9a8a; }
+  .sig-돌파임박 { background: #4a3a15; color: #ffd97a; }
+}
 </style>
 </head>
 <body>
@@ -228,7 +240,6 @@ tbody tr[data-code] { cursor: pointer; }
     <button class="tab" data-view="monthly">월간</button>
     <button class="tab" data-view="winrate">승률</button>
     <button class="tab" data-view="diff">비교</button>
-    <button class="tab" data-view="fwdtest">포워드 테스트</button>
   </div>
   <div class="market-banner" id="market-banner" style="display:none"></div>
   <div id="view-daily">
@@ -326,6 +337,7 @@ tbody tr[data-code] { cursor: pointer; }
   </div><!-- /view-monthly -->
 
   <div id="view-winrate" style="display:none">
+    <p class="sec-title" style="margin-top:14px">📊 스캔 기반 승률 <span style="font-size:12px;font-weight:400;color:var(--dim)">(과거 데이터 재구성)</span></p>
     <div class="period-line" id="wr-period"></div>
     <p class="sec-sub" style="margin:4px 2px 0">신호의 실제 적중률을 검증합니다 — 스캔 데이터가 쌓일수록 정확해져요. 표본 30개 미만 지표는 회색으로 표시돼요.</p>
     <div class="card" id="wr-card-fresh">
@@ -353,7 +365,30 @@ tbody tr[data-code] { cursor: pointer; }
         <th>기간</th><th>표본</th><th>평균</th><th>중앙값</th><th>승률</th><th>손절 도달률</th>
       </tr></thead><tbody id="wr-ft"></tbody></table></div>
     </div>
-</div>
+
+    <hr class="sec-divider">
+    <p class="sec-title" style="margin-top:6px">📝 실시간 포워드 테스트 <span style="font-size:12px;font-weight:400;color:var(--dim)">(라이브 기록)</span></p>
+    <p class="sec-sub" style="margin:4px 2px 0">위 스캔 기반 승률은 과거 데이터를 재구성한 것이고, 아래는 신호 발생 시점에 기록한 실제 순방향 데이터예요. 두 수치는 성격이 다르니 비교할 때 주의해주세요.</p>
+    <div class="period-line" id="fwdtest-period"></div>
+    <div class="card">
+      <p class="sec-title">📊 주간 승률 집계</p>
+      <div id="fwdtest-winrate"></div>
+    </div>
+    <div class="card">
+      <p class="sec-title">📝 누적 Raw 로그</p>
+      <p class="sec-sub">날짜별로 기록된 상위 10종목을 조회해요. 종목 검색으로 전 날짜 기록도 볼 수 있어요.</p>
+      <div class="filters" style="margin-bottom:10px">
+        <div class="f"><span>날짜</span><select id="fwdlog-date" style="min-width:140px"></select></div>
+        <div class="f"><span>종목 검색</span>
+          <div class="search-row">
+            <input id="fwdlog-search" type="text" placeholder="종목명 또는 코드" style="width:140px">
+            <button class="sbtn" id="fwdlog-search-btn">검색</button>
+            <button class="sbtn" id="fwdlog-reset" style="display:none">초기화</button>
+          </div>
+        </div>
+      </div>
+      <div id="fwdlog-result"></div>
+    </div>
   </div><!-- /view-winrate -->
 
   <div id="view-diff" style="display:none">
@@ -368,19 +403,6 @@ tbody tr[data-code] { cursor: pointer; }
     <div class="count-line" id="diff-count"></div>
     <div id="diff-list"></div>
   </div><!-- /view-diff -->
-
-  <div id="view-fwdtest" style="display:none">
-    <div class="period-line" id="fwdtest-period"></div>
-    <p class="sec-sub" style="margin:4px 2px 0">실제 순방향 기록 기반 포워드 테스트예요. 스캔 데이터를 재구성한 승률 탭과는 별개로 봐주세요.</p>
-    <div class="card">
-      <p class="sec-title">📊 주간 승률 집계</p>
-      <div id="fwdtest-winrate"></div>
-    </div>
-    <div class="card">
-      <p class="sec-title">📝 누적 Raw 로그</p>
-      <div id="fwdtest-log" class="fwdtest-log"></div>
-    </div>
-  </div><!-- /view-fwdtest -->
 
   <div class="foot">매일 밤 전 종목 스캔 후 자동 업데이트 · 일봉 캔들 원본은 제외 (용량) · <a href="https://github.com/younggeun/screener-reports-muse" style="color:var(--accent)">GitHub 저장소</a></div>
 </div>
@@ -690,12 +712,10 @@ document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () =>
   $("view-monthly").style.display = v === "monthly" ? "" : "none";
   $("view-winrate").style.display = v === "winrate" ? "" : "none";
   $("view-diff").style.display = v === "diff" ? "" : "none";
-  $("view-fwdtest").style.display = v === "fwdtest" ? "" : "none";
   if (v === "weekly") renderAgg("weekly");
   if (v === "monthly") renderAgg("monthly");
-  if (v === "winrate") renderWinrate();
+  if (v === "winrate") { renderWinrate(); renderFwdTest(); }
   if (v === "diff") renderDiff();
-  if (v === "fwdtest") renderFwdTest();
 }));
 
 /* ---- forward test: weekly aggregate + raw log (separate from scan-based winrate) ---- */
@@ -743,9 +763,117 @@ function mdToHtml(md) {
 }
 
 let fwdTestCache = null;
+let fwdLogParsed = null; // [{date, empty, stocks:[{rank,name,code,market,signal,score,turnover,close}]}]
+
+function parseFwdLog(md) {
+  const dates = [];
+  const sections = md.split(/^## /m).slice(1);
+  for (const sec of sections) {
+    const nl = sec.indexOf("\n");
+    const date = (nl < 0 ? sec : sec.slice(0, nl)).trim();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+    const entry = { date, empty: false, stocks: [] };
+    const rows = sec.split("\n").filter(l => l.trim().startsWith("|"));
+    if (rows.length <= 2) { entry.empty = true; }
+    else {
+      const header = rows[0].split("|").map(x => x.trim());
+      const isBucketFmt = header[1] === "버킷";
+      for (const r of rows.slice(2)) {
+        const c = r.split("|").map(x => x.trim());
+        if (isBucketFmt) {
+          if (c.length < 16 || !c[2]) continue;
+          entry.stocks.push({
+            bucket: c[1], rank: "", name: c[2], code: c[3], market: c[4],
+            signal: c[5], score: c[10], turnover: c[13], close: c[14],
+          });
+        } else {
+          if (c.length < 15 || !c[2]) continue;
+          entry.stocks.push({
+            bucket: "", rank: c[1], name: c[2], code: c[3], market: c[4],
+            signal: c[5], score: c[6], turnover: c[12], close: c[13],
+          });
+        }
+      }
+      if (!entry.stocks.length) entry.empty = true;
+    }
+    dates.push(entry);
+  }
+  dates.sort((a, b) => b.date.localeCompare(a.date));
+  return dates;
+}
+
+function fwdStockRow(s, showDate) {
+  const sigCls = s.signal === "돌파완료" ? "sig-돌파완료" : (s.signal === "돌파임박" ? "sig-돌파임박" : "");
+  const label = showDate ? mdEsc(s.date) : (s.bucket ? mdEsc(s.bucket) : `<span style="color:var(--dim)">${mdEsc(s.rank)}</span>`);
+  const main = `<tr class="fwdlog-row" data-code="${mdEsc(s.code)}">
+      <td style="font-size:11px;color:var(--dim)">${label}</td>
+      <td><b>${mdEsc(s.name)}</b></td>
+      <td>${sigCls ? `<span class="sig-badge ${sigCls}">${mdEsc(s.signal)}</span>` : mdEsc(s.signal)}</td>
+      <td style="text-align:right">${mdEsc(s.score)}</td>
+    </tr>`;
+  const detail = `<tr class="fwdlog-detail" data-code="${mdEsc(s.code)}" style="display:none">
+      <td colspan="4">
+        코드 <b>${mdEsc(s.code)}</b> · ${mdEsc(s.market)} · 거래대금 <b>${mdEsc(s.turnover)}억</b> · 기록종가 <b>${Number(s.close.replace(/,/g, "")) ? Number(s.close.replace(/,/g, "")).toLocaleString("ko-KR") : mdEsc(s.close)}원</b>
+      </td>
+    </tr>`;
+  return main + detail;
+}
+
+function renderFwdLogDate(dateStr) {
+  const entry = fwdLogParsed.find(d => d.date === dateStr);
+  const box = $("fwdlog-result");
+  if (!entry || entry.empty) {
+    box.innerHTML = `<div class="empty-note">${mdEsc(dateStr)} — 기록 없음 (스캔 없음)</div>`;
+    return;
+  }
+  box.innerHTML = `<div style="overflow-x:auto"><table><thead><tr>
+      <th>구분</th><th>종목</th><th>신호</th><th style="text-align:right">총점</th>
+    </tr></thead><tbody>${entry.stocks.map(s => fwdStockRow(s, false)).join("")}</tbody></table></div>
+    <p class="sec-sub" style="margin-top:6px">행을 누르면 상세 정보가 나와요 · 총 ${entry.stocks.length}종목</p>`;
+  bindFwdLogRows();
+}
+
+function renderFwdLogSearch(q) {
+  const box = $("fwdlog-result");
+  const ql = q.toLowerCase();
+  const hits = [];
+  for (const d of fwdLogParsed) {
+    for (const s of d.stocks) {
+      if (s.name.toLowerCase().includes(ql) || s.code.includes(q)) hits.push({ ...s, date: d.date });
+    }
+  }
+  if (!hits.length) {
+    box.innerHTML = `<div class="empty-note">"${mdEsc(q)}" — 기록 없음</div>`;
+    return;
+  }
+  box.innerHTML = `<p class="sec-sub" style="margin-bottom:6px"><b>"${mdEsc(q)}"</b> · 총 ${hits.length}건</p>
+    <div style="overflow-x:auto"><table><thead><tr>
+      <th>날짜</th><th>종목</th><th>신호</th><th style="text-align:right">총점</th>
+    </tr></thead><tbody>${hits.map(s => fwdStockRow(s, true)).join("")}</tbody></table></div>
+    <p class="sec-sub" style="margin-top:6px">행을 누르면 상세 정보가 나와요</p>`;
+  bindFwdLogRows();
+}
+
+function bindFwdLogRows() {
+  document.querySelectorAll("#fwdlog-result .fwdlog-row").forEach(tr => {
+    tr.addEventListener("click", () => {
+      const code = tr.dataset.code;
+      const det = document.querySelector(`#fwdlog-result .fwdlog-detail[data-code="${code}"]`);
+      if (det) det.style.display = det.style.display === "none" ? "" : "none";
+    });
+  });
+}
+
+function fwdLogDoSearch() {
+  const q = $("fwdlog-search").value.trim();
+  if (!q) return;
+  $("fwdlog-reset").style.display = "";
+  renderFwdLogSearch(q);
+}
+
 async function renderFwdTest() {
   $("fwdtest-period").innerHTML = "불러오는 중...";
-  $("fwdtest-winrate").innerHTML = ""; $("fwdtest-log").innerHTML = "";
+  $("fwdtest-winrate").innerHTML = "";
   try {
     if (!fwdTestCache) {
       const [wr, log] = await Promise.all([
@@ -753,13 +881,26 @@ async function renderFwdTest() {
         fetch(`${BASE}/forward_test/log.md`).then(r => { if (!r.ok) throw 0; return r.text(); }),
       ]);
       fwdTestCache = { wr, log };
+      fwdLogParsed = parseFwdLog(log);
+      const sel = $("fwdlog-date");
+      sel.innerHTML = fwdLogParsed.map(d =>
+        `<option value="${mdEsc(d.date)}">${mdEsc(d.date)}${d.empty ? " (기록 없음)" : ` (${d.stocks.length}종목)`}</option>`
+      ).join("");
+      sel.addEventListener("change", () => { $("fwdlog-search").value = ""; $("fwdlog-reset").style.display = "none"; renderFwdLogDate(sel.value); });
+      $("fwdlog-search-btn").addEventListener("click", fwdLogDoSearch);
+      $("fwdlog-search").addEventListener("keydown", e => { if (e.key === "Enter") fwdLogDoSearch(); });
+      $("fwdlog-reset").addEventListener("click", () => {
+        $("fwdlog-search").value = ""; $("fwdlog-reset").style.display = "none";
+        renderFwdLogDate($("fwdlog-date").value);
+      });
     }
     const wrLines = fwdTestCache.wr.split("\n");
     const wrTitle = (wrLines[0] || "").replace(/^#\s*/, "");
     const wrBody = wrLines.slice(1).join("\n");
     $("fwdtest-period").innerHTML = `<b>${mdEsc(wrTitle)}</b> · 매일 07:30 기록, 매주 월요일 집계`;
     $("fwdtest-winrate").innerHTML = mdToHtml(wrBody);
-    $("fwdtest-log").innerHTML = mdToHtml(fwdTestCache.log);
+    if (fwdLogParsed && fwdLogParsed.length) renderFwdLogDate($("fwdlog-date").value || fwdLogParsed[0].date);
+    else $("fwdlog-result").innerHTML = `<div class="empty-note">로그 데이터가 없어요</div>`;
   } catch (e) {
     $("fwdtest-period").innerHTML = "포워드 테스트 데이터를 불러오지 못했어요";
   }
