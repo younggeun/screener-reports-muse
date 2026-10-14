@@ -284,6 +284,25 @@ tbody tr[data-code] { cursor: pointer; }
     <tbody id="body"></tbody>
   </table>
   </div>
+
+  <div class="card" id="rebreak-card" style="display:none">
+    <p class="sec-title">🔄 재돌파 후보 (코어)</p>
+    <p class="sec-sub">수축중 + 과거 EP 이력 + 피벗 -10%~+2% · 총점 순 상위 30개</p>
+    <div style="overflow-x:auto"><table><thead><tr>
+      <th>종목</th><th>총점</th><th>피벗거리%</th><th>거래대금(억)</th>
+    </tr></thead><tbody id="rebreak-core"></tbody></table></div>
+  </div>
+
+  <div class="card" id="rebreak-ext-card" style="display:none">
+    <p class="sec-title">🔭 재돌파 확장 감시</p>
+    <p class="sec-sub">수축중 + 과거 EP 이력 + 피벗 -15%~-10% · 총점 순 상위 30개</p>
+    <details>
+      <summary style="cursor:pointer;padding:8px 2px;color:var(--accent);font-weight:600">펼쳐서 보기</summary>
+      <div style="overflow-x:auto"><table><thead><tr>
+        <th>종목</th><th>총점</th><th>피벗거리%</th><th>거래대금(억)</th>
+      </tr></thead><tbody id="rebreak-ext"></tbody></table></div>
+    </details>
+  </div>
   </div><!-- /view-daily -->
 
   <div id="view-weekly" style="display:none">
@@ -456,6 +475,7 @@ async function load(date) {
   }));
   $("loading").style.display = "none"; $("tbl").style.display = "";
   render();
+  renderRebreak();
   loadMarket(date);
 }
 
@@ -515,6 +535,40 @@ function render() {
       <td>${o.breakout_volume_ratio === "" ? "-" : fmt(o.breakout_volume_ratio, 0)}</td>
     </tr>`;
   }).join("");
+}
+
+function rebreakList(minD, maxD, exclusiveMax) {
+  return all
+    .filter(o => o.signal === "수축중" && o.ep_date !== "" && o.ep_date != null &&
+      o.pivot_dist !== "" && o.pivot_dist != null &&
+      +o.pivot_dist >= minD && (exclusiveMax ? +o.pivot_dist < maxD : +o.pivot_dist <= maxD))
+    .sort((a, b) => {
+      const sa = +a.scan_score || 0, sb = +b.scan_score || 0;
+      if (sb !== sa) return sb - sa;
+      return (+b.turnover_eok || 0) - (+a.turnover_eok || 0);
+    })
+    .slice(0, 30);
+}
+function rebreakRow(o) {
+  const g = o.scan_score === "" ? "" : grade(o.scan_score);
+  return `<tr>
+    <td class="name-cell"><b>${o.name}</b><span>${o.code} · ${o.market}</span></td>
+    <td><span class="score-n">${o.scan_score === "" ? "-" : o.scan_score}</span>${g ? `<span class="grade g-${g}">${g.toUpperCase()}</span>` : ""}</td>
+    <td>${o.pivot_dist === "" ? "-" : fmt(o.pivot_dist)}</td>
+    <td>${fmt(o.turnover_eok, 0)}</td>
+  </tr>`;
+}
+function renderRebreak() {
+  const core = rebreakList(-10, 2, false);
+  const ext = rebreakList(-15, -10, true);
+  if (core.length) {
+    $("rebreak-core").innerHTML = core.map(rebreakRow).join("");
+    $("rebreak-card").style.display = "";
+  } else { $("rebreak-card").style.display = "none"; }
+  if (ext.length) {
+    $("rebreak-ext").innerHTML = ext.map(rebreakRow).join("");
+    $("rebreak-ext-card").style.display = "";
+  } else { $("rebreak-ext-card").style.display = "none"; }
 }
 
 ["f-signal","f-score","f-turnover","f-stage","f-sort"].forEach(id =>
