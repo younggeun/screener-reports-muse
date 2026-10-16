@@ -214,6 +214,9 @@ tbody tr[data-code] { cursor: pointer; }
 #fwdtest-winrate ul { margin: 6px 0 10px; padding-left: 20px; font-size: 13px; line-height: 1.7; }
 #fwdtest-winrate li { margin: 2px 0; }
 #fwdtest-winrate li ul { margin: 2px 0 4px; }
+td.ft-drill { cursor: pointer; }
+td.ft-drill:hover { text-decoration: underline; }
+td.ft-drill.sel { background: var(--accent-soft); }
 .sec-divider { border: 0; border-top: 2px solid var(--border); margin: 22px 4px 6px; }
 .fwdlog-row { cursor: pointer; }
 .fwdlog-detail td { background: var(--bg); font-size: 12px; color: var(--dim); }
@@ -379,10 +382,11 @@ tbody tr[data-code] { cursor: pointer; }
     </div>
     <div class="card" id="wr-card-ft">
       <p class="sec-title">📊 돌파완료 후 수익률 <span id="wr-ft-tag"></span></p>
-      <p class="sec-sub">돌파 종가 대비 +5/+10/+20거래일 수익률 · 손절 도달 = 기간 내 종가가 피벗×0.92 아래로 마감</p>
+      <p class="sec-sub">돌파 종가 대비 +5/+10/+20거래일 수익률 · 손절 도달 = 기간 내 종가가 피벗×0.92 아래로 마감 · 평균·승률 숫자를 누르면 종목별 내역이 나와요</p>
       <div style="overflow-x:auto"><table><thead><tr>
         <th>기간</th><th>표본</th><th>평균</th><th>중앙값</th><th>승률</th><th>손절 도달률</th>
       </tr></thead><tbody id="wr-ft"></tbody></table></div>
+      <div id="wr-ft-drill" style="display:none"></div>
     </div>
 
     <hr class="sec-divider">
@@ -984,6 +988,8 @@ async function renderWinrate() {
          ${stageRows ? `<div class="metric-grid">${stageRows}</div>` : ""}`;
     // 2) follow-through
     const ft = d.breakout_followthrough || {};
+    wrFtData = ft; wrFtSel = null;
+    $("wr-ft-drill").style.display = "none"; $("wr-ft-drill").innerHTML = "";
     const labels = {plus_5d: "+5일", plus_10d: "+10일", plus_20d: "+20일"};
     const ftKeys = Object.keys(labels);
     const ftInsuf = ftKeys.every(k => !ft[k] || ft[k].insufficient);
@@ -993,9 +999,9 @@ async function renderWinrate() {
       const v = ft[k];
       if (!v) return `<tr><td>${labels[k]}</td><td colspan="5"><span style="color:var(--dim)">표본 부족</span></td></tr>`;
       return `<tr><td><b>${labels[k]}</b></td><td>${v.n}</td>
-        <td class="${v.avg_pct >= 0 ? "up" : "down"}">${pctCell(v.avg_pct)}</td>
+        <td class="${v.avg_pct >= 0 ? "up" : "down"} ft-drill" data-ft="${k}">${pctCell(v.avg_pct)}</td>
         <td class="${v.median_pct >= 0 ? "up" : "down"}">${pctCell(v.median_pct)}</td>
-        <td><b>${v.win_rate_pct == null ? "-" : v.win_rate_pct + "%"}</b></td>
+        <td class="ft-drill" data-ft="${k}"><b>${v.win_rate_pct == null ? "-" : v.win_rate_pct + "%"}</b></td>
         <td>${v.stop_hit_pct == null ? "-" : v.stop_hit_pct + "%"}</td></tr>`;
     }).join("");
     // 3) fresh breakout grade chart (replaces the old static grade table)
@@ -1010,6 +1016,7 @@ async function renderWinrate() {
 
 /* ---- fresh breakout: grade performance graph + drill-down ---- */
 let wrFresh = null;
+let wrFtData = null, wrFtSel = null;
 const wrSel = { cohort: "weekly", window: "10", ver: null, ck: null, grade: null };
 const GCOL = { S: "#c99327", A: "#2f9e5f", B: "#2f7de1", C: "#9aa0a6", D: "#6b7078" };
 const INSUFC = "#c9cfd4";
@@ -1192,6 +1199,42 @@ $("wr-gstat").addEventListener("click", e => {
   renderFresh();
 });
 $("wr-drill").addEventListener("click", e => {
+  const tr = e.target.closest("tr[data-code]");
+  if (!tr || !tr.dataset.d8) return;
+  e.stopPropagation();
+  wrGotoDetail(tr.dataset.d8, tr.dataset.code);
+});
+
+/* ---- breakout follow-through: per-stock drill-down ---- */
+const FT_LABELS = {plus_5d: "+5일", plus_10d: "+10일", plus_20d: "+20일"};
+function wrFtDrill(key) {
+  const v = wrFtData && wrFtData[key];
+  if (!v) return;
+  const rows = [...(v.stocks || [])].sort((a, b) => b.r - a.r).map(s =>
+    `<tr data-code="${s.c}" data-d8="${s.d}">${nameCell({ name: s.n, code: s.c, market: "" })}`
+    + `<td>${d8label(s.d)}</td>`
+    + `<td>${s.g ? `<span class="grade g-${s.g.toLowerCase()}">${s.g}</span>` : "-"}</td>`
+    + `<td>${fmt(s.base, 0)}</td>`
+    + `<td class="${s.r >= 0 ? "up" : "down"}"><b>${s.r >= 0 ? "+" : ""}${s.r.toFixed(1)}%</b></td>`
+    + `<td>${s.stop ? '<span class="stop-hit">도달</span>' : "-"}</td></tr>`).join("");
+  $("wr-ft-drill").innerHTML =
+    `<div class="wr-drill-title">${FT_LABELS[key]} 종목 내역 `
+    + `<span style="color:var(--dim);font-weight:400;font-size:12px">${v.n}건 · 수익률 순 · 종목을 누르면 해당 날짜 분석으로 이동</span></div>`
+    + `<div style="overflow-x:auto"><table><thead><tr><th>종목</th><th>신호일</th><th>등급</th><th>진입가</th><th>수익률</th><th>손절 도달</th></tr></thead>`
+    + `<tbody>${rows || `<tr><td colspan="6"><div class="empty-note">완료된 표본이 없어요</div></td></tr>`}</tbody></table></div>`;
+  $("wr-ft-drill").style.display = "";
+}
+$("wr-ft").addEventListener("click", e => {
+  const cell = e.target.closest("td.ft-drill");
+  if (!cell) return;
+  const key = cell.dataset.ft;
+  wrFtSel = wrFtSel === key ? null : key;
+  document.querySelectorAll("#wr-ft td.ft-drill").forEach(c =>
+    c.classList.toggle("sel", c.dataset.ft === wrFtSel));
+  if (wrFtSel) wrFtDrill(wrFtSel);
+  else { $("wr-ft-drill").style.display = "none"; $("wr-ft-drill").innerHTML = ""; }
+});
+$("wr-ft-drill").addEventListener("click", e => {
   const tr = e.target.closest("tr[data-code]");
   if (!tr || !tr.dataset.d8) return;
   e.stopPropagation();
