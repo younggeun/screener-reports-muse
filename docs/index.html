@@ -129,6 +129,8 @@ tbody tr:last-child td { border-bottom: none; }
 .seg button { border: none; background: transparent; color: var(--dim); font-size: 12px; font-weight: 800;
   padding: 6px 14px; border-radius: 999px; cursor: pointer; font-family: inherit; }
 .seg button.on { background: var(--surface); color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+.wr-ft-filters { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 8px 0 4px; }
+.wr-ft-filters .seg button { padding: 5px 10px; font-size: 11px; }
 .wr-nav { display: inline-flex; align-items: center; gap: 2px; }
 .wr-nav button { border: 1px solid var(--border); background: var(--surface); color: var(--dim);
   border-radius: 8px; width: 26px; height: 26px; font-size: 13px; cursor: pointer; line-height: 1; }
@@ -1207,22 +1209,56 @@ $("wr-drill").addEventListener("click", e => {
 
 /* ---- breakout follow-through: per-stock drill-down ---- */
 const FT_LABELS = {plus_5d: "+5일", plus_10d: "+10일", plus_20d: "+20일"};
-function wrFtDrill(key) {
+const wrFtF = { ret: "all", grade: "all", stop: false }; // drill-down filters
+function wrFtStocks(key) {
   const v = wrFtData && wrFtData[key];
-  if (!v) return;
-  const rows = [...(v.stocks || [])].sort((a, b) => b.r - a.r).map(s =>
-    `<tr data-code="${s.c}" data-d8="${s.d}">${nameCell({ name: s.n, code: s.c, market: "" })}`
+  if (!v) return [];
+  // 같은 코드는 가장 최근 신호일 것만 유지
+  const map = new Map();
+  for (const s of (v.stocks || [])) {
+    const cur = map.get(s.c);
+    if (!cur || s.d > cur.d) map.set(s.c, s);
+  }
+  return [...map.values()];
+}
+function wrFtRow(s) {
+  return `<tr data-code="${s.c}" data-d8="${s.d}">${nameCell({ name: s.n, code: s.c, market: "" })}`
     + `<td>${d8label(s.d)}</td>`
     + `<td>${s.g ? `<span class="grade g-${s.g.toLowerCase()}">${s.g}</span>` : "-"}</td>`
     + `<td>${fmt(s.base, 0)}</td>`
     + `<td class="${s.r >= 0 ? "up" : "down"}"><b>${s.r >= 0 ? "+" : ""}${s.r.toFixed(1)}%</b></td>`
-    + `<td>${s.stop ? '<span class="stop-hit">도달</span>' : "-"}</td></tr>`).join("");
+    + `<td>${s.stop ? '<span class="stop-hit">도달</span>' : "-"}</td></tr>`;
+}
+function wrFtRender() {
+  const key = wrFtSel;
+  const v = wrFtData && wrFtData[key];
+  if (!v || !key) return;
+  const all = wrFtStocks(key);
+  const f = wrFtF;
+  const list = all.filter(s =>
+    (f.ret === "all" || (f.ret === "plus" ? s.r >= 0 : s.r < 0)) &&
+    (f.grade === "all" || s.g === f.grade) &&
+    (!f.stop || s.stop)
+  ).sort((a, b) => b.r - a.r);
+  const rows = list.map(wrFtRow).join("");
+  const seg = (k, opts) => `<div class="seg">${opts.map(([val, label]) =>
+    `<button data-ftf="${k}" data-v="${val}" class="${wrFtF[k] === val ? "on" : ""}">${label}</button>`).join("")}</div>`;
+  const stopBtn = `<div class="seg"><button data-ftf="stop" data-v="1" class="${wrFtF.stop ? "on" : ""}">손절 도달만</button></div>`;
   $("wr-ft-drill").innerHTML =
     `<div class="wr-drill-title">${FT_LABELS[key]} 종목 내역 `
-    + `<span style="color:var(--dim);font-weight:400;font-size:12px">${v.n}건 · 수익률 순 · 종목을 누르면 해당 날짜 분석으로 이동</span></div>`
+    + `<span style="color:var(--dim);font-weight:400;font-size:12px">${v.n}건 → ${all.length}종목 · 표시 ${list.length}건 · 수익률 순 · 종목을 누르면 해당 날짜 분석으로 이동</span></div>`
+    + `<div class="wr-ft-filters">`
+    + seg("ret", [["all", "전체"], ["plus", "플러스만"], ["minus", "마이너스만"]])
+    + seg("grade", [["all", "전체"], ["S", "S"], ["A", "A"], ["B", "B"], ["C", "C"], ["D", "D"]])
+    + stopBtn
+    + `</div>`
     + `<div style="overflow-x:auto"><table><thead><tr><th>종목</th><th>신호일</th><th>등급</th><th>진입가</th><th>수익률</th><th>손절 도달</th></tr></thead>`
-    + `<tbody>${rows || `<tr><td colspan="6"><div class="empty-note">완료된 표본이 없어요</div></td></tr>`}</tbody></table></div>`;
+    + `<tbody>${rows || `<tr><td colspan="6"><div class="empty-note">조건에 맞는 종목이 없어요</div></td></tr>`}</tbody></table></div>`;
   $("wr-ft-drill").style.display = "";
+}
+function wrFtDrill(key) {
+  wrFtF.ret = "all"; wrFtF.grade = "all"; wrFtF.stop = false;
+  wrFtRender();
 }
 $("wr-ft").addEventListener("click", e => {
   const cell = e.target.closest("td.ft-drill");
@@ -1235,6 +1271,14 @@ $("wr-ft").addEventListener("click", e => {
   else { $("wr-ft-drill").style.display = "none"; $("wr-ft-drill").innerHTML = ""; }
 });
 $("wr-ft-drill").addEventListener("click", e => {
+  const fb = e.target.closest("[data-ftf]");
+  if (fb) {
+    const k = fb.dataset.ftf;
+    if (k === "stop") wrFtF.stop = !wrFtF.stop;
+    else wrFtF[k] = fb.dataset.v;
+    wrFtRender();
+    return;
+  }
   const tr = e.target.closest("tr[data-code]");
   if (!tr || !tr.dataset.d8) return;
   e.stopPropagation();
