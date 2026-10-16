@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-16T03:02:02+00:00",
+  "generated_at": "2026-10-16T03:19:05+00:00",
   "date_range": {
     "first": "20261006",
     "last": "20261015"
@@ -2027,6 +2027,76 @@
         "pivot_dist": 17.6805002842524
       }
     ]
+  },
+  "lifecycle": {
+    "ready": {
+      "n_episodes": 32,
+      "n_converted": 3,
+      "conversion_rate_pct": 9.38,
+      "conversion_window_days": 10,
+      "insufficient": false,
+      "entry_comparison": {
+        "plus_5d": {
+          "ready": {
+            "n": 22,
+            "avg_pct": -5.95,
+            "win_rate_pct": 18.18,
+            "insufficient": true
+          },
+          "breakout": {
+            "n": 0,
+            "avg_pct": null,
+            "win_rate_pct": null,
+            "insufficient": true
+          }
+        },
+        "plus_10d": {
+          "ready": {
+            "n": 0,
+            "avg_pct": null,
+            "win_rate_pct": null,
+            "insufficient": true
+          },
+          "breakout": {
+            "n": 0,
+            "avg_pct": null,
+            "win_rate_pct": null,
+            "insufficient": true
+          }
+        },
+        "plus_20d": {
+          "ready": {
+            "n": 0,
+            "avg_pct": null,
+            "win_rate_pct": null,
+            "insufficient": true
+          },
+          "breakout": {
+            "n": 0,
+            "avg_pct": null,
+            "win_rate_pct": null,
+            "insufficient": true
+          }
+        }
+      }
+    },
+    "trend": {
+      "n_episodes": 66,
+      "n_winners_5d": 20,
+      "sustain_10d_pct": null,
+      "sustain_10d_n": 0,
+      "sustain_20d_pct": null,
+      "sustain_20d_n": 0,
+      "avg_peak_day": 2.11,
+      "insufficient": false
+    },
+    "flow": {
+      "ready_n": 32,
+      "converted_n": 3,
+      "sustain_n": 0,
+      "sustain_base": 0,
+      "sustain_pct": null
+    }
   },
   "sample_note": "Forward test on 7 scans (20261006~20261015). Each breakout episode's first signal date is one sample (a stock staying above its pivot across consecutive scans counts once; a later re-breakout after dropping out is a new sample); returns use later scans' close prices on a trading-day basis. Metrics with n<30 are marked insufficient."
 }
