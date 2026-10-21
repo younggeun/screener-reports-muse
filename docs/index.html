@@ -453,6 +453,15 @@ const NUM = new Set(["close_price","change_ratio","turnover_eok","average_turnov
 const $ = id => document.getElementById(id);
 let all = [], curSignal = "";
 const BASE = "https://raw.githubusercontent.com/younggeun/screener-reports-muse/main";
+// raw.githubusercontent responds with Cache-Control max-age=300, so right after
+// a push the browser/CDN can keep serving the previous manifest for ~5 min
+// (a plain refresh does not help). Bust it: every data fetch from BASE gets a
+// per-page-load version param, so the page always sees the latest push.
+const CB = Date.now();
+const _rawFetch = window.fetch.bind(window);
+window.fetch = (url, opt) => (typeof url === "string" && url.startsWith(BASE))
+  ? _rawFetch(`${url}${url.includes("?") ? "&" : "?"}v=${CB}`, opt)
+  : _rawFetch(url, opt);
 
 function parseCSV(text) {
   const rows = []; let row = [], cur = "", q = false;
