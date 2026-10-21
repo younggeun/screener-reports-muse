@@ -3,18 +3,19 @@
   "start_date": "20261019",
   "end_date": "20261025",
   "scan_dates": [
-    "20261019"
+    "20261019",
+    "20261020"
   ],
-  "scan_count": 1,
-  "generated_at": "2026-10-19T15:21:08+00:00",
+  "scan_count": 2,
+  "generated_at": "2026-10-21T18:42:51+09:00",
   "new_breakouts": [
     {
       "code": "419050",
       "name": "삼기에너지솔루션즈",
       "market": "KOSDAQ",
       "breakout_date": "20261019",
-      "scan_score": 51.0,
-      "turnover_eok": 1352.84,
+      "scan_score": 65.0,
+      "turnover_eok": 338.21,
       "breakout_volume_ratio": 1106.73411964579
     },
     {
@@ -22,8 +23,8 @@
       "name": "삼아알미늄",
       "market": "KOSPI",
       "breakout_date": "20261019",
-      "scan_score": 74.0,
-      "turnover_eok": 407.16,
+      "scan_score": 70.0,
+      "turnover_eok": 222.12,
       "breakout_volume_ratio": 243.545381573522
     },
     {
@@ -31,102 +32,102 @@
       "name": "지어소프트",
       "market": "KOSDAQ",
       "breakout_date": "20261019",
-      "scan_score": 60.0,
-      "turnover_eok": 37.58,
-      "breakout_volume_ratio": 89.4742802441969
+      "scan_score": 62.0,
+      "turnover_eok": 20.57,
+      "breakout_volume_ratio": 90.2220365112711
     }
   ],
   "persistent_near": [],
   "top_movers": [
     {
-      "code": "000020",
-      "name": "동화약품",
-      "period_return_pct": 0.0,
-      "last_close": 5540.0
+      "code": "011080",
+      "name": "형지I&C",
+      "period_return_pct": 29.99,
+      "last_close": 1140.0
     },
     {
-      "code": "000050",
-      "name": "경방",
-      "period_return_pct": 0.0,
-      "last_close": 7890.0
+      "code": "300080",
+      "name": "플리토",
+      "period_return_pct": 29.83,
+      "last_close": 10750.0
     },
     {
-      "code": "000070",
-      "name": "삼양홀딩스",
-      "period_return_pct": 0.0,
-      "last_close": 54700.0
+      "code": "308100",
+      "name": "형지글로벌",
+      "period_return_pct": 29.83,
+      "last_close": 383.0
     },
     {
-      "code": "000080",
-      "name": "하이트진로",
-      "period_return_pct": 0.0,
-      "last_close": 15940.0
+      "code": "289220",
+      "name": "자이언트스텝",
+      "period_return_pct": 29.29,
+      "last_close": 1267.0
     },
     {
-      "code": "000100",
-      "name": "유한양행",
-      "period_return_pct": 0.0,
-      "last_close": 86500.0
+      "code": "030960",
+      "name": "양지사",
+      "period_return_pct": 19.1,
+      "last_close": 6860.0
     },
     {
-      "code": "000120",
-      "name": "CJ대한통운",
-      "period_return_pct": 0.0,
-      "last_close": 71300.0
+      "code": "131100",
+      "name": "티엔엔터테인먼트",
+      "period_return_pct": 16.49,
+      "last_close": 3815.0
     },
     {
-      "code": "000140",
-      "name": "하이트진로홀딩스",
-      "period_return_pct": 0.0,
-      "last_close": 7730.0
+      "code": "195990",
+      "name": "루트K",
+      "period_return_pct": 15.99,
+      "last_close": 1146.0
     },
     {
-      "code": "000150",
-      "name": "두산",
-      "period_return_pct": 0.0,
-      "last_close": 1087000.0
+      "code": "373200",
+      "name": "엑스플러스",
+      "period_return_pct": 13.06,
+      "last_close": 2510.0
     },
     {
-      "code": "000180",
-      "name": "성창기업지주",
-      "period_return_pct": 0.0,
-      "last_close": 4940.0
+      "code": "036630",
+      "name": "세종텔레콤",
+      "period_return_pct": 12.83,
+      "last_close": 8000.0
     },
     {
-      "code": "000210",
-      "name": "DL",
-      "period_return_pct": 0.0,
-      "last_close": 45000.0
+      "code": "065450",
+      "name": "빅텍",
+      "period_return_pct": 9.93,
+      "last_close": 3210.0
     },
     {
-      "code": "000220",
-      "name": "유유제약",
-      "period_return_pct": 0.0,
-      "last_close": 3810.0
+      "code": "396300",
+      "name": "HT로보틱스",
+      "period_return_pct": 9.78,
+      "last_close": 9880.0
     },
     {
-      "code": "000230",
-      "name": "일동홀딩스",
-      "period_return_pct": 0.0,
-      "last_close": 6110.0
+      "code": "192440",
+      "name": "슈피겐코리아",
+      "period_return_pct": 9.75,
+      "last_close": 30400.0
     },
     {
-      "code": "000240",
-      "name": "한국앤컴퍼니",
-      "period_return_pct": 0.0,
-      "last_close": 26300.0
+      "code": "369370",
+      "name": "블리츠웨이엔터테인먼트",
+      "period_return_pct": 9.32,
+      "last_close": 2875.0
     },
     {
-      "code": "000250",
-      "name": "삼천당제약",
-      "period_return_pct": 0.0,
-      "last_close": 209500.0
+      "code": "322780",
+      "name": "코퍼스코리아",
+      "period_return_pct": 9.3,
+      "last_close": 1657.0
     },
     {
-      "code": "000270",
-      "name": "기아",
-      "period_return_pct": 0.0,
-      "last_close": 114700.0
+      "code": "186230",
+      "name": "그린플러스",
+      "period_return_pct": 9.22,
+      "last_close": 3495.0
     }
   ]
 }
