@@ -1,21 +1,21 @@
 {
-  "generated_at": "2026-10-21T15:23:16+00:00",
+  "generated_at": "2026-10-22T15:21:45+00:00",
   "date_range": {
     "first": "20261006",
-    "last": "20261021"
+    "last": "20261022"
   },
-  "total_scans": 11,
+  "total_scans": 12,
   "min_samples": 30,
   "near_to_breakout": {
-    "total": 7,
-    "converted": 1,
-    "rate_pct": 14.29,
+    "total": 14,
+    "converted": 3,
+    "rate_pct": 21.43,
     "window_trading_days": 10,
     "by_stage": {
       "3": {
-        "total": 7,
-        "converted": 1,
-        "rate_pct": 14.29,
+        "total": 14,
+        "converted": 3,
+        "rate_pct": 21.43,
         "insufficient": true
       }
     },
@@ -24,16 +24,26 @@
   "breakout_followthrough": {
     "plus_5d": {
       "window_trading_days": 5,
-      "avg_pct": -0.45,
-      "median_pct": -3.34,
-      "win_rate_pct": 42.42,
-      "stop_hit_pct": 31.82,
-      "n_pivot": 66,
-      "excess_avg_pct": 10.16,
-      "excess_median_pct": 6.47,
-      "excess_win_rate_pct": 69.7,
-      "n_excess": 66,
+      "avg_pct": -0.46,
+      "median_pct": -3.25,
+      "win_rate_pct": 41.79,
+      "stop_hit_pct": 31.34,
+      "n_pivot": 67,
+      "excess_avg_pct": 10.0,
+      "excess_median_pct": 6.2,
+      "excess_win_rate_pct": 68.66,
+      "n_excess": 67,
       "stocks": [
+        {
+          "n": "코웨이",
+          "c": "021240",
+          "d": "20261015",
+          "g": "C",
+          "base": 106800,
+          "r": -1.12,
+          "stop": false,
+          "excess_pct": -0.76
+        },
         {
           "n": "HT로보틱스",
           "c": "396300",
@@ -695,21 +705,51 @@
           "excess_pct": -10.26
         }
       ],
-      "n": 66,
+      "n": 67,
       "insufficient": false
     },
     "plus_10d": {
       "window_trading_days": 10,
-      "avg_pct": -7.23,
-      "median_pct": -9.3,
-      "win_rate_pct": 30.43,
-      "stop_hit_pct": 67.39,
-      "n_pivot": 46,
-      "excess_avg_pct": 7.28,
-      "excess_median_pct": 5.62,
-      "excess_win_rate_pct": 65.22,
-      "n_excess": 46,
+      "avg_pct": -7.99,
+      "median_pct": -9.67,
+      "win_rate_pct": 30.61,
+      "stop_hit_pct": 67.35,
+      "n_pivot": 49,
+      "excess_avg_pct": 6.71,
+      "excess_median_pct": 5.33,
+      "excess_win_rate_pct": 63.27,
+      "n_excess": 49,
       "stocks": [
+        {
+          "n": "펌텍코리아",
+          "c": "251970",
+          "d": "20261007",
+          "g": "B",
+          "base": 67600,
+          "r": 1.78,
+          "stop": false,
+          "excess_pct": 16.73
+        },
+        {
+          "n": "에이피알",
+          "c": "278470",
+          "d": "20261007",
+          "g": "C",
+          "base": 380500,
+          "r": -24.05,
+          "stop": true,
+          "excess_pct": -5.38
+        },
+        {
+          "n": "한미사이언스",
+          "c": "008930",
+          "d": "20261007",
+          "g": "C",
+          "base": 66200,
+          "r": -36.33,
+          "stop": true,
+          "excess_pct": -17.66
+        },
         {
           "n": "엑시콘",
           "c": "092870",
@@ -1171,7 +1211,7 @@
           "excess_pct": -13.39
         }
       ],
-      "n": 46,
+      "n": 49,
       "insufficient": false
     },
     "plus_20d": null
@@ -1193,9 +1233,17 @@
       "insufficient": true
     },
     "B": {
-      "win_rate_pct": 16.67,
-      "avg_pct": -8.62,
+      "win_rate_pct": 23.08,
+      "avg_pct": -7.82,
       "stocks": [
+        {
+          "n": "펌텍코리아",
+          "c": "251970",
+          "d": "20261007",
+          "base": 67600,
+          "r": 1.78,
+          "stop": false
+        },
         {
           "n": "동국산업",
           "c": "005160",
@@ -1293,13 +1341,29 @@
           "stop": true
         }
       ],
-      "n": 12,
+      "n": 13,
       "insufficient": true
     },
     "C": {
-      "win_rate_pct": 30.0,
-      "avg_pct": -8.83,
+      "win_rate_pct": 28.12,
+      "avg_pct": -10.17,
       "stocks": [
+        {
+          "n": "에이피알",
+          "c": "278470",
+          "d": "20261007",
+          "base": 380500,
+          "r": -24.05,
+          "stop": true
+        },
+        {
+          "n": "한미사이언스",
+          "c": "008930",
+          "d": "20261007",
+          "base": 66200,
+          "r": -36.33,
+          "stop": true
+        },
         {
           "n": "엑시콘",
           "c": "092870",
@@ -1541,7 +1605,7 @@
           "stop": true
         }
       ],
-      "n": 30,
+      "n": 32,
       "insufficient": false
     }
   },
@@ -1554,7 +1618,7 @@
     "versions": [
       "v3"
     ],
-    "n_samples": 72,
+    "n_samples": 74,
     "n_excluded_windows": 0,
     "min_samples": 30,
     "note": "완료된 표본만 집계합니다. 대기 중인 표본은 손실로 처리하지 않습니다.",
@@ -2633,7 +2697,10 @@
             "r": -33.23,
             "stop": true
           },
-          "10": null,
+          "10": {
+            "r": -36.33,
+            "stop": true
+          },
           "20": null
         }
       },
@@ -2653,7 +2720,10 @@
             "r": -3.25,
             "stop": false
           },
-          "10": null,
+          "10": {
+            "r": 1.78,
+            "stop": false
+          },
           "20": null
         }
       },
@@ -2673,7 +2743,10 @@
             "r": -22.73,
             "stop": true
           },
-          "10": null,
+          "10": {
+            "r": -24.05,
+            "stop": true
+          },
           "20": null
         }
       },
@@ -3029,7 +3102,10 @@
         "mk": "2026-10",
         "ml": "2026년 10월",
         "w": {
-          "5": null,
+          "5": {
+            "r": -1.12,
+            "stop": false
+          },
           "10": null,
           "20": null
         }
@@ -3108,6 +3184,40 @@
         "n": "삼기에너지솔루션즈",
         "g": "C",
         "s": 51.0,
+        "v": "v3",
+        "wk": "2026W43",
+        "wl": "10/19~10/25",
+        "mk": "2026-10",
+        "ml": "2026년 10월",
+        "w": {
+          "5": null,
+          "10": null,
+          "20": null
+        }
+      },
+      {
+        "d": "20261022",
+        "c": "018260",
+        "n": "삼성에스디에스",
+        "g": "C",
+        "s": 61.0,
+        "v": "v3",
+        "wk": "2026W43",
+        "wl": "10/19~10/25",
+        "mk": "2026-10",
+        "ml": "2026년 10월",
+        "w": {
+          "5": null,
+          "10": null,
+          "20": null
+        }
+      },
+      {
+        "d": "20261022",
+        "c": "028050",
+        "n": "삼성E&A",
+        "g": "B",
+        "s": 70.0,
         "v": "v3",
         "wk": "2026W43",
         "wl": "10/19~10/25",
@@ -3222,45 +3332,45 @@
         "insufficient": false
       },
       "CD|하|중간": {
-        "n": 5,
+        "n": 6,
         "win_rate_pct": 0.0,
-        "avg_pct": -13.9,
+        "avg_pct": -11.77,
         "insufficient": true
       }
     }
   },
   "latest_breakouts": {
-    "date": "20261021",
+    "date": "20261022",
     "stocks": [
       {
-        "n": "삼아알미늄",
-        "c": "006110",
+        "n": "삼성E&A",
+        "c": "028050",
         "g": "B",
         "gb": "B",
-        "vol": "중",
+        "vol": "상",
         "piv": "근접",
         "score": 70.0,
-        "pivot_dist": 1.88205771643664
+        "pivot_dist": 1.6304347826087
+      },
+      {
+        "n": "삼성에스디에스",
+        "c": "018260",
+        "g": "C",
+        "gb": "CD",
+        "vol": "중",
+        "piv": "근접",
+        "score": 61.0,
+        "pivot_dist": 1.70316301703163
       },
       {
         "n": "동국제약",
         "c": "086450",
-        "g": "B",
-        "gb": "B",
-        "vol": "중",
-        "piv": "멈",
-        "score": 68.0,
-        "pivot_dist": 8.48214285714286
-      },
-      {
-        "n": "코웨이",
-        "c": "021240",
         "g": "C",
         "gb": "CD",
-        "vol": "하",
-        "piv": "근접",
-        "score": 58.0,
-        "pivot_dist": 1.92492781520693
+        "vol": "중",
+        "piv": "중간",
+        "score": 60.0,
+        "pivot_dist": 4.24107142857143
       },
       {
         "n": "KT&G",
@@ -3268,9 +3378,9 @@
         "g": "C",
         "gb": "CD",
         "vol": "하",
-        "piv": "멈",
-        "score": 57.0,
-        "pivot_dist": 8.23594880356149
+        "piv": "중간",
+        "score": 59.0,
+        "pivot_dist": 7.73511407902059
       },
       {
         "n": "HT로보틱스",
@@ -3279,8 +3389,8 @@
         "gb": "CD",
         "vol": "상",
         "piv": "멈",
-        "score": 57.0,
-        "pivot_dist": 73.4042553191489
+        "score": 53.0,
+        "pivot_dist": 50.9118541033435
       },
       {
         "n": "에스엠벡셀",
@@ -3289,16 +3399,16 @@
         "gb": "CD",
         "vol": "상",
         "piv": "멈",
-        "score": 45.0,
-        "pivot_dist": 34.125636672326
+        "score": 49.0,
+        "pivot_dist": 15.7894736842105
       }
     ]
   },
   "lifecycle": {
     "ready": {
-      "n_episodes": 37,
+      "n_episodes": 38,
       "n_converted": 3,
-      "conversion_rate_pct": 8.11,
+      "conversion_rate_pct": 7.89,
       "conversion_window_days": 10,
       "insufficient": false,
       "entry_comparison": {
@@ -3318,9 +3428,9 @@
         },
         "plus_10d": {
           "ready": {
-            "n": 17,
-            "avg_pct": -8.06,
-            "win_rate_pct": 11.76,
+            "n": 22,
+            "avg_pct": -8.84,
+            "win_rate_pct": 18.18,
             "insufficient": true
           },
           "breakout": {
@@ -3357,12 +3467,12 @@
       "insufficient": false
     },
     "flow": {
-      "ready_n": 37,
+      "ready_n": 38,
       "converted_n": 3,
       "sustain_n": 0,
       "sustain_base": 0,
       "sustain_pct": null
     }
   },
-  "sample_note": "Forward test on 11 scans (20261006~20261021). Each breakout episode's first signal date is one sample (a stock staying above its pivot across consecutive scans counts once; a later re-breakout after dropping out is a new sample); returns use later scans' close prices on a trading-day basis. Metrics with n<30 are marked insufficient."
+  "sample_note": "Forward test on 12 scans (20261006~20261022). Each breakout episode's first signal date is one sample (a stock staying above its pivot across consecutive scans counts once; a later re-breakout after dropping out is a new sample); returns use later scans' close prices on a trading-day basis. Metrics with n<30 are marked insufficient."
 }
