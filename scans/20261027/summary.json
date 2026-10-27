@@ -1,0 +1,20 @@
+{
+  "run_id": "market-v3-20261027",
+  "session_date": "20261027",
+  "status": "complete",
+  "total_stocks": 2440,
+  "processed_stocks": 2440,
+  "matched_stocks": 7,
+  "failed_stocks": 124,
+  "started_at_kst": "2026-10-27T17:58:48+09:00",
+  "completed_at_kst": "2026-10-28T00:13:04+09:00",
+  "signal_distribution": {
+    "관망": 390,
+    "데이터 부족": 6,
+    "돌파완료": 7,
+    "수축중": 18,
+    "없음": 1895
+  },
+  "columns": 41,
+  "note": "history_json (daily OHLCV candles) excluded from CSV due to size; available in the screener app"
+}
