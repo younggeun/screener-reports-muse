@@ -1,610 +1,123 @@
 {
-  "period": "2026-10",
-  "start_date": "20261001",
-  "end_date": "20261031",
+  "period": "2026-11",
+  "start_date": "20261101",
+  "end_date": "20261130",
   "scan_dates": [
-    "20261006",
-    "20261007",
-    "20261008",
-    "20261012",
-    "20261013",
-    "20261014",
-    "20261015",
-    "20261016",
-    "20261019",
-    "20261020",
-    "20261021",
-    "20261022",
-    "20261023",
-    "20261026",
-    "20261027",
-    "20261028",
-    "20261029",
-    "20261030"
+    "20261102"
   ],
-  "scan_count": 18,
-  "generated_at": "2026-10-30T15:21:10+00:00",
+  "scan_count": 1,
+  "generated_at": "2026-11-02T15:21:06+00:00",
   "new_breakouts": [
     {
-      "code": "036930",
-      "name": "주성엔지니어링",
-      "market": "KOSDAQ",
-      "breakout_date": "20261006",
-      "scan_score": 70.0,
-      "turnover_eok": 10009.48,
-      "breakout_volume_ratio": 256.846862002286
-    },
-    {
-      "code": "009150",
-      "name": "삼성전기",
+      "code": "180640",
+      "name": "한진칼",
       "market": "KOSPI",
-      "breakout_date": "20261006",
-      "scan_score": 60.0,
-      "turnover_eok": 8847.47,
-      "breakout_volume_ratio": 108.262126899221
-    },
-    {
-      "code": "066570",
-      "name": "LG전자",
-      "market": "KOSPI",
-      "breakout_date": "20261006",
-      "scan_score": 62.0,
-      "turnover_eok": 2784.08,
-      "breakout_volume_ratio": 136.209039136147
-    },
-    {
-      "code": "080220",
-      "name": "제주반도체",
-      "market": "KOSDAQ",
-      "breakout_date": "20261001",
-      "scan_score": 58.0,
-      "turnover_eok": 1863.17,
-      "breakout_volume_ratio": 244.032978557819
-    },
-    {
-      "code": "356680",
-      "name": "엑스게이트",
-      "market": "KOSDAQ",
-      "breakout_date": "20261006",
-      "scan_score": 69.0,
-      "turnover_eok": 1487.57,
-      "breakout_volume_ratio": 264.211564012037
-    },
-    {
-      "code": "278470",
-      "name": "에이피알",
-      "market": "KOSPI",
-      "breakout_date": "20261007",
-      "scan_score": 62.0,
-      "turnover_eok": 1384.0,
-      "breakout_volume_ratio": 138.125828094037
-    },
-    {
-      "code": "028050",
-      "name": "삼성E&A",
-      "market": "KOSPI",
-      "breakout_date": "20261022",
-      "scan_score": 60.0,
-      "turnover_eok": 1369.13,
-      "breakout_volume_ratio": 772.192727787729
-    },
-    {
-      "code": "053800",
-      "name": "안랩",
-      "market": "KOSDAQ",
-      "breakout_date": "20261027",
-      "scan_score": 57.0,
-      "turnover_eok": 1351.21,
-      "breakout_volume_ratio": 329.773541910757
-    },
-    {
-      "code": "001820",
-      "name": "삼화콘덴서",
-      "market": "KOSPI",
-      "breakout_date": "20261006",
-      "scan_score": 65.0,
-      "turnover_eok": 1195.58,
-      "breakout_volume_ratio": 87.6087703017514
-    },
-    {
-      "code": "034730",
-      "name": "SK",
-      "market": "KOSPI",
-      "breakout_date": "20261027",
-      "scan_score": 57.0,
-      "turnover_eok": 1127.8,
-      "breakout_volume_ratio": 129.044591724409
-    },
-    {
-      "code": "263860",
-      "name": "지니언스",
-      "market": "KOSDAQ",
-      "breakout_date": "20261030",
-      "scan_score": 55.0,
-      "turnover_eok": 1056.35,
-      "breakout_volume_ratio": 993.19905978505
-    },
-    {
-      "code": "222800",
-      "name": "심텍",
-      "market": "KOSDAQ",
-      "breakout_date": "20261001",
-      "scan_score": 61.0,
-      "turnover_eok": 1016.7,
-      "breakout_volume_ratio": 102.129005331324
-    },
-    {
-      "code": "042510",
-      "name": "라온시큐어",
-      "market": "KOSDAQ",
-      "breakout_date": "20261014",
-      "scan_score": 52.0,
-      "turnover_eok": 822.53,
-      "breakout_volume_ratio": 360.755565603225
-    },
-    {
-      "code": "396300",
-      "name": "HT로보틱스",
-      "market": "KOSDAQ",
-      "breakout_date": "20261014",
-      "scan_score": 53.0,
-      "turnover_eok": 736.18,
-      "breakout_volume_ratio": 627.970075711751
-    },
-    {
-      "code": "067310",
-      "name": "하나마이크론",
-      "market": "KOSDAQ",
-      "breakout_date": "20261001",
-      "scan_score": 60.0,
-      "turnover_eok": 653.84,
-      "breakout_volume_ratio": 165.813886472708
-    },
-    {
-      "code": "000810",
-      "name": "삼성화재",
-      "market": "KOSPI",
-      "breakout_date": "20261028",
-      "scan_score": 56.0,
-      "turnover_eok": 613.99,
-      "breakout_volume_ratio": 108.075908691303
-    },
-    {
-      "code": "204270",
-      "name": "제이앤티씨",
-      "market": "KOSDAQ",
-      "breakout_date": "20261008",
-      "scan_score": 65.0,
-      "turnover_eok": 562.14,
-      "breakout_volume_ratio": 289.436684022242
-    },
-    {
-      "code": "005830",
-      "name": "DB손해보험",
-      "market": "KOSPI",
-      "breakout_date": "20261013",
-      "scan_score": 65.0,
-      "turnover_eok": 557.01,
-      "breakout_volume_ratio": 130.842832056674
-    },
-    {
-      "code": "033780",
-      "name": "KT&G",
-      "market": "KOSPI",
-      "breakout_date": "20261014",
+      "breakout_date": "20261102",
       "scan_score": 59.0,
-      "turnover_eok": 540.69,
-      "breakout_volume_ratio": 122.347149976353
+      "turnover_eok": 370.21,
+      "breakout_volume_ratio": 694.773049217879
     },
     {
-      "code": "010950",
-      "name": "S-Oil",
-      "market": "KOSPI",
-      "breakout_date": "20261002",
-      "scan_score": 58.0,
-      "turnover_eok": 493.56,
-      "breakout_volume_ratio": 116.531777520497
-    },
-    {
-      "code": "093370",
-      "name": "후성",
-      "market": "KOSPI",
-      "breakout_date": "20261001",
-      "scan_score": 60.0,
-      "turnover_eok": 464.2,
-      "breakout_volume_ratio": 241.09044683051
-    },
-    {
-      "code": "036540",
-      "name": "SFA반도체",
+      "code": "105740",
+      "name": "디케이락",
       "market": "KOSDAQ",
-      "breakout_date": "20261002",
-      "scan_score": 60.0,
-      "turnover_eok": 463.2,
-      "breakout_volume_ratio": 166.303200364404
-    },
-    {
-      "code": "192820",
-      "name": "코스맥스",
-      "market": "KOSPI",
-      "breakout_date": "20261006",
-      "scan_score": 64.0,
-      "turnover_eok": 459.7,
-      "breakout_volume_ratio": 146.923392786757
-    },
-    {
-      "code": "011200",
-      "name": "HMM",
-      "market": "KOSPI",
-      "breakout_date": "20261012",
-      "scan_score": 60.0,
-      "turnover_eok": 445.75,
-      "breakout_volume_ratio": 274.425391678329
-    },
-    {
-      "code": "092870",
-      "name": "엑시콘",
-      "market": "KOSDAQ",
-      "breakout_date": "20261027",
-      "scan_score": 68.0,
-      "turnover_eok": 430.9,
-      "breakout_volume_ratio": 142.184984143856
-    },
-    {
-      "code": "028670",
-      "name": "팬오션",
-      "market": "KOSPI",
-      "breakout_date": "20261012",
-      "scan_score": 70.0,
-      "turnover_eok": 430.22,
-      "breakout_volume_ratio": 299.823514538263
-    },
-    {
-      "code": "144960",
-      "name": "뉴파워프라즈마",
-      "market": "KOSDAQ",
-      "breakout_date": "20261027",
-      "scan_score": 72.0,
-      "turnover_eok": 411.32,
-      "breakout_volume_ratio": 216.40279325227
-    },
-    {
-      "code": "356860",
-      "name": "티엘비",
-      "market": "KOSDAQ",
-      "breakout_date": "20261001",
-      "scan_score": 55.0,
-      "turnover_eok": 407.22,
-      "breakout_volume_ratio": 116.01534232506
-    },
-    {
-      "code": "018260",
-      "name": "삼성에스디에스",
-      "market": "KOSPI",
-      "breakout_date": "20261028",
-      "scan_score": 53.0,
-      "turnover_eok": 395.92,
-      "breakout_volume_ratio": 97.9494908910427
-    },
-    {
-      "code": "078350",
-      "name": "한양디지텍",
-      "market": "KOSDAQ",
-      "breakout_date": "20261028",
-      "scan_score": 70.0,
-      "turnover_eok": 347.53,
-      "breakout_volume_ratio": 222.062210902046
-    },
-    {
-      "code": "419050",
-      "name": "삼기에너지솔루션즈",
-      "market": "KOSDAQ",
-      "breakout_date": "20261019",
-      "scan_score": 65.0,
-      "turnover_eok": 338.21,
-      "breakout_volume_ratio": 1106.73411964579
-    },
-    {
-      "code": "089890",
-      "name": "코세스",
-      "market": "KOSDAQ",
-      "breakout_date": "20261022",
-      "scan_score": 55.0,
-      "turnover_eok": 313.87,
-      "breakout_volume_ratio": 418.304708820682
-    },
-    {
-      "code": "327260",
-      "name": "RF머트리얼즈",
-      "market": "KOSDAQ",
-      "breakout_date": "20261002",
-      "scan_score": 65.0,
-      "turnover_eok": 292.41,
-      "breakout_volume_ratio": 289.064892535934
-    },
-    {
-      "code": "006110",
-      "name": "삼아알미늄",
-      "market": "KOSPI",
-      "breakout_date": "20261019",
-      "scan_score": 70.0,
-      "turnover_eok": 244.9,
-      "breakout_volume_ratio": 243.545381573522
-    },
-    {
-      "code": "064290",
-      "name": "인텍플러스",
-      "market": "KOSDAQ",
-      "breakout_date": "20261028",
-      "scan_score": 67.0,
-      "turnover_eok": 239.67,
-      "breakout_volume_ratio": 147.283041167861
-    },
-    {
-      "code": "080580",
-      "name": "오킨스전자",
-      "market": "KOSDAQ",
-      "breakout_date": "20261013",
-      "scan_score": 74.0,
-      "turnover_eok": 237.3,
-      "breakout_volume_ratio": 215.21543680271
-    },
-    {
-      "code": "425420",
-      "name": "티에프이",
-      "market": "KOSDAQ",
-      "breakout_date": "20261027",
-      "scan_score": 55.0,
-      "turnover_eok": 236.4,
-      "breakout_volume_ratio": 342.455423742718
-    },
-    {
-      "code": "005160",
-      "name": "동국산업",
-      "market": "KOSDAQ",
-      "breakout_date": "20261008",
-      "scan_score": 70.0,
-      "turnover_eok": 209.52,
-      "breakout_volume_ratio": 1742.95453974712
-    },
-    {
-      "code": "251970",
-      "name": "펌텍코리아",
-      "market": "KOSDAQ",
-      "breakout_date": "20261016",
+      "breakout_date": "20261102",
       "scan_score": 69.0,
-      "turnover_eok": 166.38,
-      "breakout_volume_ratio": 221.162740582998
-    },
-    {
-      "code": "059090",
-      "name": "미코",
-      "market": "KOSDAQ",
-      "breakout_date": "20261028",
-      "scan_score": 70.0,
-      "turnover_eok": 164.9,
-      "breakout_volume_ratio": 316.691706273798
-    },
-    {
-      "code": "021240",
-      "name": "코웨이",
-      "market": "KOSPI",
-      "breakout_date": "20261015",
-      "scan_score": 58.0,
-      "turnover_eok": 161.6,
-      "breakout_volume_ratio": 143.853732312602
-    },
-    {
-      "code": "159010",
-      "name": "아스플로",
-      "market": "KOSDAQ",
-      "breakout_date": "20261029",
-      "scan_score": 66.0,
-      "turnover_eok": 151.83,
-      "breakout_volume_ratio": 243.592906473859
-    },
-    {
-      "code": "091580",
-      "name": "상신이디피",
-      "market": "KOSDAQ",
-      "breakout_date": "20261006",
-      "scan_score": 69.0,
-      "turnover_eok": 119.46,
-      "breakout_volume_ratio": 241.891789144174
-    },
-    {
-      "code": "253590",
-      "name": "네오셈",
-      "market": "KOSDAQ",
-      "breakout_date": "20261002",
-      "scan_score": 55.0,
-      "turnover_eok": 111.31,
-      "breakout_volume_ratio": 445.149014654253
-    },
-    {
-      "code": "010580",
-      "name": "에스엠벡셀",
-      "market": "KOSPI",
-      "breakout_date": "20261015",
-      "scan_score": 49.0,
-      "turnover_eok": 96.24,
-      "breakout_volume_ratio": 1631.88756585885
-    },
-    {
-      "code": "093320",
-      "name": "케이아이엔엑스",
-      "market": "KOSDAQ",
-      "breakout_date": "20261028",
-      "scan_score": 52.0,
-      "turnover_eok": 85.54,
-      "breakout_volume_ratio": 47.8871757090986
-    },
-    {
-      "code": "086450",
-      "name": "동국제약",
-      "market": "KOSDAQ",
-      "breakout_date": "20261012",
-      "scan_score": 62.0,
-      "turnover_eok": 83.3,
-      "breakout_volume_ratio": 234.438789060169
-    },
-    {
-      "code": "008930",
-      "name": "한미사이언스",
-      "market": "KOSPI",
-      "breakout_date": "20261007",
-      "scan_score": 63.0,
-      "turnover_eok": 80.54,
-      "breakout_volume_ratio": 194.373953247918
-    },
-    {
-      "code": "219130",
-      "name": "타이거일렉",
-      "market": "KOSDAQ",
-      "breakout_date": "20261027",
-      "scan_score": 60.0,
-      "turnover_eok": 50.61,
-      "breakout_volume_ratio": 154.380099355325
-    },
-    {
-      "code": "051160",
-      "name": "지어소프트",
-      "market": "KOSDAQ",
-      "breakout_date": "20261019",
-      "scan_score": 62.0,
-      "turnover_eok": 20.57,
-      "breakout_volume_ratio": 90.2220365112711
-    },
-    {
-      "code": "105330",
-      "name": "케이엔더블유",
-      "market": "KOSDAQ",
-      "breakout_date": "20261001",
-      "scan_score": 48.0,
-      "turnover_eok": 7.05,
-      "breakout_volume_ratio": 90.7412575027861
+      "turnover_eok": 166.7,
+      "breakout_volume_ratio": 277.049719521767
     }
   ],
-  "persistent_near": [
-    {
-      "code": "138040",
-      "name": "메리츠금융지주",
-      "days": 13,
-      "scan_score": 56.0,
-      "pivot_dist": -3.65764447695684
-    },
-    {
-      "code": "011200",
-      "name": "HMM",
-      "days": 5,
-      "scan_score": 58.0,
-      "pivot_dist": -4.12371134020619
-    },
-    {
-      "code": "003490",
-      "name": "대한항공",
-      "days": 4,
-      "scan_score": 45.0,
-      "pivot_dist": -17.6838810641628
-    },
-    {
-      "code": "098120",
-      "name": "마이크로컨텍솔",
-      "days": 3,
-      "scan_score": 55.0,
-      "pivot_dist": -13.8095238095238
-    }
-  ],
+  "persistent_near": [],
   "top_movers": [
     {
-      "code": "051630",
-      "name": "진양화학",
-      "period_return_pct": 126.21,
-      "last_close": 3185.0
+      "code": "000020",
+      "name": "동화약품",
+      "period_return_pct": 0.0,
+      "last_close": 5240.0
     },
     {
-      "code": "011080",
-      "name": "형지I&C",
-      "period_return_pct": 106.38,
-      "last_close": 873.0
+      "code": "000050",
+      "name": "경방",
+      "period_return_pct": 0.0,
+      "last_close": 7660.0
     },
     {
-      "code": "003780",
-      "name": "진양산업",
-      "period_return_pct": 71.39,
-      "last_close": 6830.0
+      "code": "000070",
+      "name": "삼양홀딩스",
+      "period_return_pct": 0.0,
+      "last_close": 53000.0
     },
     {
-      "code": "219750",
-      "name": "한국비티비",
-      "period_return_pct": 64.73,
-      "last_close": 2835.0
+      "code": "000080",
+      "name": "하이트진로",
+      "period_return_pct": 0.0,
+      "last_close": 15950.0
     },
     {
-      "code": "026910",
-      "name": "광진실업",
-      "period_return_pct": 61.37,
-      "last_close": 3760.0
+      "code": "000100",
+      "name": "유한양행",
+      "period_return_pct": 0.0,
+      "last_close": 76200.0
     },
     {
-      "code": "010640",
-      "name": "진양폴리",
-      "period_return_pct": 58.48,
-      "last_close": 3160.0
+      "code": "000120",
+      "name": "CJ대한통운",
+      "period_return_pct": 0.0,
+      "last_close": 66900.0
     },
     {
-      "code": "278650",
-      "name": "HLB바이오스텝",
-      "period_return_pct": 55.56,
-      "last_close": 5810.0
+      "code": "000140",
+      "name": "하이트진로홀딩스",
+      "period_return_pct": 0.0,
+      "last_close": 7320.0
     },
     {
-      "code": "373200",
-      "name": "엑스플러스",
-      "period_return_pct": 49.02,
-      "last_close": 2900.0
+      "code": "000150",
+      "name": "두산",
+      "period_return_pct": 0.0,
+      "last_close": 901000.0
     },
     {
-      "code": "010580",
-      "name": "에스엠벡셀",
-      "period_return_pct": 44.24,
-      "last_close": 3195.0
+      "code": "000180",
+      "name": "성창기업지주",
+      "period_return_pct": 0.0,
+      "last_close": 4785.0
     },
     {
-      "code": "250930",
-      "name": "예선테크",
-      "period_return_pct": 44.1,
-      "last_close": 990.0
+      "code": "000210",
+      "name": "DL",
+      "period_return_pct": 0.0,
+      "last_close": 41800.0
     },
     {
-      "code": "053800",
-      "name": "안랩",
-      "period_return_pct": 40.37,
-      "last_close": 122400.0
+      "code": "000220",
+      "name": "유유제약",
+      "period_return_pct": 0.0,
+      "last_close": 3685.0
     },
     {
-      "code": "328130",
-      "name": "루닛",
-      "period_return_pct": 39.69,
-      "last_close": 15520.0
+      "code": "000230",
+      "name": "일동홀딩스",
+      "period_return_pct": 0.0,
+      "last_close": 5670.0
     },
     {
-      "code": "089230",
-      "name": "THE E&M",
-      "period_return_pct": 39.04,
-      "last_close": 2550.0
+      "code": "000240",
+      "name": "한국앤컴퍼니",
+      "period_return_pct": 0.0,
+      "last_close": 23400.0
     },
     {
-      "code": "093320",
-      "name": "케이아이엔엑스",
-      "period_return_pct": 38.02,
-      "last_close": 176800.0
+      "code": "000250",
+      "name": "삼천당제약",
+      "period_return_pct": 0.0,
+      "last_close": 184000.0
     },
     {
-      "code": "030960",
-      "name": "양지사",
-      "period_return_pct": 37.72,
-      "last_close": 6390.0
+      "code": "000270",
+      "name": "기아",
+      "period_return_pct": 0.0,
+      "last_close": 95400.0
     }
   ]
 }
