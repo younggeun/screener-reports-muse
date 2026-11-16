@@ -12,10 +12,11 @@
     "20261110",
     "20261111",
     "20261112",
-    "20261113"
+    "20261113",
+    "20261116"
   ],
-  "scan_count": 10,
-  "generated_at": "2026-11-13T15:22:11+00:00",
+  "scan_count": 11,
+  "generated_at": "2026-11-16T15:22:17+00:00",
   "new_breakouts": [
     {
       "code": "003490",
@@ -40,18 +41,27 @@
       "name": "삼성E&A",
       "market": "KOSPI",
       "breakout_date": "20261113",
-      "scan_score": 66.0,
-      "turnover_eok": 2128.3,
+      "scan_score": 62.0,
+      "turnover_eok": 1376.18,
       "breakout_volume_ratio": 130.032167824274
     },
     {
-      "code": "001210",
-      "name": "금호전기",
+      "code": "086790",
+      "name": "하나금융지주",
       "market": "KOSPI",
       "breakout_date": "20261113",
-      "scan_score": 62.0,
-      "turnover_eok": 811.15,
-      "breakout_volume_ratio": 249.674469090722
+      "scan_score": 60.0,
+      "turnover_eok": 799.01,
+      "breakout_volume_ratio": 92.5783133221164
+    },
+    {
+      "code": "316140",
+      "name": "우리금융지주",
+      "market": "KOSPI",
+      "breakout_date": "20261116",
+      "scan_score": 60.0,
+      "turnover_eok": 668.27,
+      "breakout_volume_ratio": 69.0059755851915
     },
     {
       "code": "018260",
@@ -59,7 +69,7 @@
       "market": "KOSPI",
       "breakout_date": "20261110",
       "scan_score": 60.0,
-      "turnover_eok": 646.04,
+      "turnover_eok": 626.06,
       "breakout_volume_ratio": 205.991558596136
     },
     {
@@ -99,6 +109,24 @@
       "breakout_volume_ratio": 164.929399399829
     },
     {
+      "code": "261780",
+      "name": "아리바이오랩",
+      "market": "KOSDAQ",
+      "breakout_date": "20261113",
+      "scan_score": 49.0,
+      "turnover_eok": 413.9,
+      "breakout_volume_ratio": 403.065228998814
+    },
+    {
+      "code": "001210",
+      "name": "금호전기",
+      "market": "KOSPI",
+      "breakout_date": "20261113",
+      "scan_score": 62.0,
+      "turnover_eok": 292.44,
+      "breakout_volume_ratio": 249.674469090722
+    },
+    {
       "code": "041830",
       "name": "인바디",
       "market": "KOSDAQ",
@@ -117,13 +145,13 @@
       "breakout_volume_ratio": 228.639970654394
     },
     {
-      "code": "036710",
-      "name": "심텍홀딩스",
-      "market": "KOSDAQ",
-      "breakout_date": "20261111",
-      "scan_score": 54.0,
-      "turnover_eok": 233.94,
-      "breakout_volume_ratio": 1445.78631755353
+      "code": "192820",
+      "name": "코스맥스",
+      "market": "KOSPI",
+      "breakout_date": "20261116",
+      "scan_score": 65.0,
+      "turnover_eok": 208.55,
+      "breakout_volume_ratio": 68.1660395742376
     },
     {
       "code": "105740",
@@ -153,6 +181,24 @@
       "breakout_volume_ratio": 111.442422187898
     },
     {
+      "code": "036710",
+      "name": "심텍홀딩스",
+      "market": "KOSDAQ",
+      "breakout_date": "20261111",
+      "scan_score": 54.0,
+      "turnover_eok": 100.32,
+      "breakout_volume_ratio": 1445.78631755353
+    },
+    {
+      "code": "089860",
+      "name": "롯데렌탈",
+      "market": "KOSPI",
+      "breakout_date": "20261106",
+      "scan_score": 63.0,
+      "turnover_eok": 83.84,
+      "breakout_volume_ratio": 2148.88679844762
+    },
+    {
       "code": "141000",
       "name": "비아트론",
       "market": "KOSDAQ",
@@ -169,15 +215,6 @@
       "scan_score": 56.0,
       "turnover_eok": 54.97,
       "breakout_volume_ratio": 137.352699136637
-    },
-    {
-      "code": "089860",
-      "name": "롯데렌탈",
-      "market": "KOSPI",
-      "breakout_date": "20261106",
-      "scan_score": 63.0,
-      "turnover_eok": 51.22,
-      "breakout_volume_ratio": 2148.88679844762
     }
   ],
   "persistent_near": [
@@ -185,100 +222,100 @@
       "code": "033780",
       "name": "KT&G",
       "days": 5,
-      "scan_score": 48.0,
-      "pivot_dist": -12.1890547263682
+      "scan_score": 54.0,
+      "pivot_dist": -9.50248756218905
     }
   ],
   "top_movers": [
     {
-      "code": "069510",
-      "name": "에스텍",
-      "period_return_pct": 65.16,
-      "last_close": 23800.0
-    },
-    {
-      "code": "036710",
-      "name": "심텍홀딩스",
-      "period_return_pct": 63.38,
+      "code": "261780",
+      "name": "아리바이오랩",
+      "period_return_pct": 72.98,
       "last_close": 5890.0
-    },
-    {
-      "code": "128540",
-      "name": "에코캡",
-      "period_return_pct": 56.89,
-      "last_close": 1230.0
-    },
-    {
-      "code": "020400",
-      "name": "대동금속",
-      "period_return_pct": 55.05,
-      "last_close": 3025.0
-    },
-    {
-      "code": "180640",
-      "name": "한진칼",
-      "period_return_pct": 51.29,
-      "last_close": 205000.0
     },
     {
       "code": "301300",
       "name": "바이브컴퍼니",
-      "period_return_pct": 49.97,
-      "last_close": 2365.0
+      "period_return_pct": 71.21,
+      "last_close": 2700.0
+    },
+    {
+      "code": "128540",
+      "name": "에코캡",
+      "period_return_pct": 68.88,
+      "last_close": 1324.0
+    },
+    {
+      "code": "069510",
+      "name": "에스텍",
+      "period_return_pct": 64.82,
+      "last_close": 23750.0
+    },
+    {
+      "code": "180640",
+      "name": "한진칼",
+      "period_return_pct": 59.78,
+      "last_close": 216500.0
+    },
+    {
+      "code": "036710",
+      "name": "심텍홀딩스",
+      "period_return_pct": 55.89,
+      "last_close": 5620.0
+    },
+    {
+      "code": "476080",
+      "name": "M83",
+      "period_return_pct": 51.44,
+      "last_close": 5520.0
     },
     {
       "code": "186230",
       "name": "그린플러스",
-      "period_return_pct": 48.76,
-      "last_close": 4515.0
+      "period_return_pct": 48.93,
+      "last_close": 4520.0
     },
     {
       "code": "051630",
       "name": "진양화학",
-      "period_return_pct": 45.8,
-      "last_close": 4950.0
+      "period_return_pct": 47.57,
+      "last_close": 5010.0
     },
     {
-      "code": "109610",
-      "name": "에스와이",
-      "period_return_pct": 42.99,
-      "last_close": 2365.0
+      "code": "020400",
+      "name": "대동금속",
+      "period_return_pct": 45.31,
+      "last_close": 2835.0
     },
     {
-      "code": "250930",
-      "name": "예선테크",
-      "period_return_pct": 40.95,
-      "last_close": 1339.0
-    },
-    {
-      "code": "272450",
-      "name": "진에어",
-      "period_return_pct": 40.94,
-      "last_close": 7780.0
-    },
-    {
-      "code": "267850",
-      "name": "아시아나IDT",
-      "period_return_pct": 40.89,
-      "last_close": 12680.0
-    },
-    {
-      "code": "430690",
-      "name": "한싹",
-      "period_return_pct": 40.46,
-      "last_close": 4010.0
+      "code": "303030",
+      "name": "지니틱스",
+      "period_return_pct": 42.41,
+      "last_close": 1276.0
     },
     {
       "code": "181710",
       "name": "NHN",
-      "period_return_pct": 39.79,
-      "last_close": 66400.0
+      "period_return_pct": 42.11,
+      "last_close": 67500.0
     },
     {
-      "code": "261780",
-      "name": "아리바이오랩",
-      "period_return_pct": 39.65,
-      "last_close": 4755.0
+      "code": "267850",
+      "name": "아시아나IDT",
+      "period_return_pct": 42.0,
+      "last_close": 12780.0
+    },
+    {
+      "code": "446840",
+      "name": "지슨",
+      "period_return_pct": 41.03,
+      "last_close": 4640.0
+    },
+    {
+      "code": "290690",
+      "name": "아리바이오홀딩스",
+      "period_return_pct": 40.29,
+      "last_close": 3865.0
     }
   ]
 }
