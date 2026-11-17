@@ -13,10 +13,11 @@
     "20261111",
     "20261112",
     "20261113",
-    "20261116"
+    "20261116",
+    "20261117"
   ],
-  "scan_count": 11,
-  "generated_at": "2026-11-16T15:22:17+00:00",
+  "scan_count": 12,
+  "generated_at": "2026-11-17T15:22:11+00:00",
   "new_breakouts": [
     {
       "code": "003490",
@@ -35,6 +36,15 @@
       "scan_score": 59.0,
       "turnover_eok": 2482.09,
       "breakout_volume_ratio": 694.773049217879
+    },
+    {
+      "code": "263860",
+      "name": "지니언스",
+      "market": "KOSDAQ",
+      "breakout_date": "20261117",
+      "scan_score": 60.0,
+      "turnover_eok": 1383.72,
+      "breakout_volume_ratio": 358.324639249349
     },
     {
       "code": "028050",
@@ -127,6 +137,15 @@
       "breakout_volume_ratio": 249.674469090722
     },
     {
+      "code": "192820",
+      "name": "코스맥스",
+      "market": "KOSPI",
+      "breakout_date": "20261116",
+      "scan_score": 64.0,
+      "turnover_eok": 277.17,
+      "breakout_volume_ratio": 68.1660395742376
+    },
+    {
       "code": "041830",
       "name": "인바디",
       "market": "KOSDAQ",
@@ -145,13 +164,13 @@
       "breakout_volume_ratio": 228.639970654394
     },
     {
-      "code": "192820",
-      "name": "코스맥스",
+      "code": "161890",
+      "name": "한국콜마",
       "market": "KOSPI",
-      "breakout_date": "20261116",
-      "scan_score": 65.0,
-      "turnover_eok": 208.55,
-      "breakout_volume_ratio": 68.1660395742376
+      "breakout_date": "20261117",
+      "scan_score": 60.0,
+      "turnover_eok": 216.57,
+      "breakout_volume_ratio": 76.6341367410817
     },
     {
       "code": "105740",
@@ -161,6 +180,15 @@
       "scan_score": 65.0,
       "turnover_eok": 174.31,
       "breakout_volume_ratio": 216.669236363114
+    },
+    {
+      "code": "089860",
+      "name": "롯데렌탈",
+      "market": "KOSPI",
+      "breakout_date": "20261106",
+      "scan_score": 69.0,
+      "turnover_eok": 115.43,
+      "breakout_volume_ratio": 2148.88679844762
     },
     {
       "code": "159010",
@@ -190,13 +218,13 @@
       "breakout_volume_ratio": 1445.78631755353
     },
     {
-      "code": "089860",
-      "name": "롯데렌탈",
-      "market": "KOSPI",
-      "breakout_date": "20261106",
-      "scan_score": 63.0,
-      "turnover_eok": 83.84,
-      "breakout_volume_ratio": 2148.88679844762
+      "code": "241710",
+      "name": "코스메카코리아",
+      "market": "KOSDAQ",
+      "breakout_date": "20261117",
+      "scan_score": 59.0,
+      "turnover_eok": 74.09,
+      "breakout_volume_ratio": 68.4859728506787
     },
     {
       "code": "141000",
@@ -223,27 +251,15 @@
       "name": "KT&G",
       "days": 5,
       "scan_score": 54.0,
-      "pivot_dist": -9.50248756218905
+      "pivot_dist": -9.75124378109453
     }
   ],
   "top_movers": [
     {
-      "code": "261780",
-      "name": "아리바이오랩",
-      "period_return_pct": 72.98,
-      "last_close": 5890.0
-    },
-    {
-      "code": "301300",
-      "name": "바이브컴퍼니",
-      "period_return_pct": 71.21,
-      "last_close": 2700.0
-    },
-    {
-      "code": "128540",
-      "name": "에코캡",
-      "period_return_pct": 68.88,
-      "last_close": 1324.0
+      "code": "446840",
+      "name": "지슨",
+      "period_return_pct": 83.28,
+      "last_close": 6030.0
     },
     {
       "code": "069510",
@@ -252,70 +268,82 @@
       "last_close": 23750.0
     },
     {
-      "code": "180640",
-      "name": "한진칼",
-      "period_return_pct": 59.78,
-      "last_close": 216500.0
-    },
-    {
-      "code": "036710",
-      "name": "심텍홀딩스",
-      "period_return_pct": 55.89,
-      "last_close": 5620.0
-    },
-    {
-      "code": "476080",
-      "name": "M83",
-      "period_return_pct": 51.44,
-      "last_close": 5520.0
-    },
-    {
-      "code": "186230",
-      "name": "그린플러스",
-      "period_return_pct": 48.93,
-      "last_close": 4520.0
+      "code": "128540",
+      "name": "에코캡",
+      "period_return_pct": 61.61,
+      "last_close": 1267.0
     },
     {
       "code": "051630",
       "name": "진양화학",
-      "period_return_pct": 47.57,
-      "last_close": 5010.0
+      "period_return_pct": 61.12,
+      "last_close": 5470.0
+    },
+    {
+      "code": "180640",
+      "name": "한진칼",
+      "period_return_pct": 57.2,
+      "last_close": 213000.0
+    },
+    {
+      "code": "036710",
+      "name": "심텍홀딩스",
+      "period_return_pct": 49.79,
+      "last_close": 5400.0
+    },
+    {
+      "code": "010640",
+      "name": "진양폴리",
+      "period_return_pct": 47.67,
+      "last_close": 4430.0
     },
     {
       "code": "020400",
       "name": "대동금속",
-      "period_return_pct": 45.31,
-      "last_close": 2835.0
+      "period_return_pct": 47.36,
+      "last_close": 2875.0
     },
     {
-      "code": "303030",
-      "name": "지니틱스",
-      "period_return_pct": 42.41,
-      "last_close": 1276.0
+      "code": "301300",
+      "name": "바이브컴퍼니",
+      "period_return_pct": 45.85,
+      "last_close": 2300.0
     },
     {
       "code": "181710",
       "name": "NHN",
-      "period_return_pct": 42.11,
-      "last_close": 67500.0
+      "period_return_pct": 45.26,
+      "last_close": 69000.0
     },
     {
-      "code": "267850",
-      "name": "아시아나IDT",
-      "period_return_pct": 42.0,
-      "last_close": 12780.0
+      "code": "261780",
+      "name": "아리바이오랩",
+      "period_return_pct": 44.49,
+      "last_close": 4920.0
     },
     {
-      "code": "446840",
-      "name": "지슨",
-      "period_return_pct": 41.03,
-      "last_close": 4640.0
+      "code": "335870",
+      "name": "윙스풋",
+      "period_return_pct": 44.4,
+      "last_close": 3935.0
     },
     {
-      "code": "290690",
-      "name": "아리바이오홀딩스",
-      "period_return_pct": 40.29,
-      "last_close": 3865.0
+      "code": "009420",
+      "name": "한올바이오파마",
+      "period_return_pct": 42.21,
+      "last_close": 53400.0
+    },
+    {
+      "code": "272450",
+      "name": "진에어",
+      "period_return_pct": 41.85,
+      "last_close": 7830.0
+    },
+    {
+      "code": "126880",
+      "name": "제이엔케이글로벌",
+      "period_return_pct": 38.63,
+      "last_close": 3445.0
     }
   ]
 }
